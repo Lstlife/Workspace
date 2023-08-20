@@ -109,7 +109,7 @@ local function createportal(rootpos,tpos,hitpart,ptype)
 					if hit.Parent == player.Character and portal2 and tpcd == false then
 						tpcd = true
 						Teleport2:Play()
-						player.Character.Humanoid.Sit = true
+						--//player.Character.Humanoid.Sit = true
 						player.Character.HumanoidRootPart.CFrame = portal2.CFrame
 						player.Character.HumanoidRootPart.AssemblyLinearVelocity = portal2.CFrame.LookVector*(-velocity*2.5)
 						workspace.CurrentCamera.CFrame =  portal2.CFrame
@@ -214,7 +214,7 @@ local function createportal(rootpos,tpos,hitpart,ptype)
 					if hit.Parent == player.Character and portal1 and tpcd == false then
 						tpcd = true
 						Teleport:Play()
-						player.Character.Humanoid.Sit = true
+						--player.Character.Humanoid.Sit = true
 						player.Character.HumanoidRootPart.CFrame = portal1.CFrame
 						player.Character.HumanoidRootPart.AssemblyLinearVelocity = portal1.CFrame.LookVector*(-velocity*2.5)
 						workspace.CurrentCamera.CFrame =  portal1.CFrame
