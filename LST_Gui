@@ -107,7 +107,7 @@ do
 
     --//Touch Fling (uses a ragdoll engine gui)
     Tabs.Main:AddButton({
-        Title = "Touch FLing",
+        Title = "Touch Fling",
         Description = "Fling / No tool",
         Callback = function()
             Window:Dialog({
