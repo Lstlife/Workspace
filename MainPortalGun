@@ -1,0 +1,37 @@
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/PortalGun'))()
+local player = game:GetService("Players").LocalPlayer
+local character = player.Character
+local string = "http://www.roblox.com/asset/?id="
+character.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "0"
+
+--//for when player joins in
+local Starthum = character:WaitForChild("Humanoid",5)
+
+--//readd anim when player is seated
+Starthum.Seated:Connect(function(sitting)
+    if sitting then
+        character.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "182393478"
+    else
+        character.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "0"
+    end
+end)
+
+player.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid",5)
+
+    --//readd anim when player is seated
+    hum.Seated:Connect(function(sitting)
+        if sitting then
+            char.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "182393478"
+        else
+            char.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "0"
+        end
+    end)
+    --//remove tool anim to keep arm down when gun is equipped
+    char.ChildAdded:Connect(function(item)
+        if item:IsA("Tool") then
+            repeat char.Animate.toolnone.ToolNoneAnim.AnimationId = string.. "0"
+            until char.Animate.toolnone.ToolNoneAnim.AnimationId == string.. "0"
+        end
+    end)
+end)
