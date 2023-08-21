@@ -24,7 +24,7 @@ do
     --//Main Description
     Tabs.Main:AddParagraph({
         Title = "These scripts have been edited",
-        Content = "majority of these are universal"
+        Content = "majority of these are universal, please wait after executing for script to load"
     })
 
     --//Ghostify
