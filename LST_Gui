@@ -1,0 +1,544 @@
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Fluent " .. Fluent.Version,
+    SubTitle = "by dawid",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark"
+})
+
+--Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+    Games = Window:AddTab({ Title = "Games", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+    --//Main Description
+    Tabs.Main:AddParagraph({
+        Title = "These scripts have been edited",
+        Content = "majority of these are universal"
+    })
+
+    --//Ghostify
+    Tabs.Main:AddButton({
+        Title = "Ghostify",
+        Description = "Tool",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Gives you a tool to become invis.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Ghostify'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Portal Gun
+    Tabs.Main:AddButton({
+        Title = "Portal Gun",
+        Description = "Tool",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "its a portal gun, no tool anim",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/MainPortalGun'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Chat Log
+    Tabs.Main:AddButton({
+        Title = "Chat Log",
+        Description = "Chat Spy",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Makes private chats visible in normal roblox chat box, only visible to you",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Chat%20Log'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Touch Fling (uses a ragdoll engine gui)
+    Tabs.Main:AddButton({
+        Title = "Touch FLing",
+        Description = "Fling / No tool",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Uses a ragdoll engine gui, touch fling can be found as a toggle in gui.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/martinelcrac/cryptonichub/main/Ragdollengine.lua'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//shiftlock enable
+    Tabs.Main:AddButton({
+        Title = "Enable Shiftlock",
+        Description = "Camera",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm",
+                Content = "Changes cam distance and enables shiftlock",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            game:GetService('Players').LocalPlayer.DevEnableMouseLock = true
+                            game:GetService('Players').LocalPlayer.CameraMaxZoomDistance = 100
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Telekinesis
+    Tabs.Main:AddButton({
+        Title = "Telekinesis",
+        Description = "Tool",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Buttons: Q:Back, E:Forward, R:Rotate, T:Reset Dis, Y:Throw",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Telekinesis'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Rewind
+    Tabs.Main:AddButton({
+        Title = "Rewind",
+        Description = "Movement",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Hold R to rewind your players movements",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Rewind'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Exploiter Chat
+    Tabs.Main:AddButton({
+        Title = "Exploiter Chat",
+        Description = "Custom Chat",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Uses a chat box to send chats only other players with this gui can understand, translates your text and theres for you.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Exploiter%20Chat'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+     --//Anti Fling
+     Tabs.Main:AddButton({
+        Title = "Anti Fling",
+        Description = "Fling Prevention",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Stops people from flinging you, can still use touch fling with this",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet("https://raw.githubusercontent.com/joshclark756/joshclark756-s-scripts/main/anti%20fling.lua",true))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Parkour
+    Tabs.Main:AddButton({
+        Title = "Parkour",
+        Description = "Movement",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm",
+                Content = "Do some parkour yo",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Parkour'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --/Hamster Ball
+    Tabs.Main:AddButton({
+        Title = "Hamster Ball",
+        Description = "Movement",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Move around like you in a hamster ball, can reset to stop.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Hamster%20Ball'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Reach
+    Tabs.Main:AddButton({
+        Title = "Reach",
+        Description = "Pvp",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Allows you to use reach on classis swords, might work for other swords but untested.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/Reach'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Simply Spy
+    Tabs.Main:AddButton({
+        Title = "Simply Spy",
+        Description = "Remote Spy",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "Spy on remotes in game, useful for making your own scripts obviously",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//WalkOnWalls
+    Tabs.Main:AddButton({
+        Title = "Walk On Walls",
+        Description = "Movement",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm",
+                Content = "Allows you to walk on walls, no way to disable and messes up your camera.",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet('https://raw.githubusercontent.com/Lstlife/Workspace/main/WallWalk'))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Bypassed Chat
+    Tabs.Main:AddButton({
+        Title = "Bypassed Chat",
+        Description = "Custom Chat",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm",
+                Content = "Allows you to chat anything you'd like, if it gets patched ill remove it",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet("https://raw.githubusercontent.com/synnyyy/synergy/additional/betterbypasser", true))({
+                                Method = 1, -- Method 1 is the main method. Method two is emojis. Method 3 is full transparency, no special symbols. Method 3 has been improved!
+                                Keybind = "F", -- Usually defaulted to F. You can change this keybind by replacing the string with a letter. Works for uppercase and lowercase.
+                                ShowMethodDictionary = true -- Shows you the full list of words that you can say with the method. Press FN + F9 to see this dictionary.
+                            })
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --------------------
+
+    --//Game Description
+    Tabs.Games:AddParagraph({
+        Title = "Scripts for random games",
+        Content = "will add more the more I find"
+    })
+
+    --//Sacrific
+    Tabs.Games:AddButton({
+        Title = "Sacrific Sanctuary",
+        Description = "",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet("https://raw.githubusercontent.com/HTDBarsi/SacrificeSanctuary/main/main.lua"))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Eviction Notice
+    Tabs.Games:AddButton({
+        Title = "Eviction Notice",
+        Description = "",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet("https://raw.githubusercontent.com/download4/idkeviction/main/Eviction.lua"))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    --//Fling Things And People
+    Tabs.Games:AddButton({
+        Title = "Fling Things And People",
+        Description = "",
+        Callback = function()
+            Window:Dialog({
+                Title = "Confirm?",
+                Content = "",
+                Buttons = {
+                    {
+                        Title = "Execute",
+                        Callback = function()
+                            loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/main/FlingThingsAndPeople"))()
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+end
+
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "LST_LIFE",
+    Content = "Script loaded.",
+    Duration = 4
+})
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config
+-- which has been marked to be one that auto loads!
+SaveManager:LoadAutoloadConfig()
