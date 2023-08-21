@@ -237,7 +237,7 @@ do
     })
 
     --//Enable inventory
-    local Toggle = Tabs.Main:AddToggle("MyToggle", {Title = "Toggle", Default = false })
+    local Toggle = Tabs.Main:AddToggle("MyToggle", {Title = "Enable Inventory", Default = false })
 
     Toggle:OnChanged(function()
         game.StarterGui:SetCoreGuiEnabled(2, Options.MyToggle.Value)
