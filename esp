@@ -60,9 +60,7 @@ local DEFAULT_CONFIG = {
 	fade_start = 500,
 	fade_end = 1000,
 
-  objectcolor = {
-    "Log" = Color3.new(.47, .274, .133)
-  }
+	objectcolor = { "Log" = Color3.new(.47, .274, .133) },
 }
 
 local PART_NAMES = {"HumanoidRootPart", "Head", "UpperTorso", "Torso"}
