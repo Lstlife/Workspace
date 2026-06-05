@@ -941,12 +941,25 @@ function VeroLib.new(themeName)
 	self.MinimizeBtn = endBtn("−", 2)
 	self.CloseBtn    = endBtn("X", 3)
 
-	-- Panel body
-	self.PanelBody = make("Frame", {
-		Name = "PanelBody", Size = UDim2.new(1, 0, 0, 0),
+	-- Max panel height before scrolling kicks in
+	self.MaxPanelHeight = 320
+
+	-- Panel body — ScrollingFrame so content past max height scrolls cleanly
+	self.PanelBody = make("ScrollingFrame", {
+		Name = "PanelBody",
+		Size = UDim2.new(1, 0, 0, 0),
 		Position = UDim2.fromOffset(0, 44),
-		BackgroundColor3 = T.PanelBg, BorderSizePixel = 0,
-		ZIndex = 3, Visible = false,
+		BackgroundColor3 = T.PanelBg,
+		BorderSizePixel = 0,
+		ZIndex = 3,
+		Visible = false,
+		ScrollBarThickness = 3,
+		ScrollBarImageColor3 = T.RowBorder,
+		ScrollBarImageTransparency = 0,
+		CanvasSize = UDim2.new(1, 0, 0, 0),
+		AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollingDirection = Enum.ScrollingDirection.Y,
+		ElasticBehavior = Enum.ElasticBehavior.Never,
 	}, self.Window)
 	padding(self.PanelBody, 14, 14, 12, 12)
 	listLayout(self.PanelBody)
@@ -1100,9 +1113,10 @@ function VeroLib:SetTheme(themeName)
 	self.Theme = T
 
 	-- Top-level surfaces
-	self.Window.BackgroundColor3     = T.Background
-	self.Bar.BackgroundColor3        = T.Bar
-	self.PanelBody.BackgroundColor3  = T.PanelBg
+	self.Window.BackgroundColor3          = T.Background
+	self.Bar.BackgroundColor3             = T.Bar
+	self.PanelBody.BackgroundColor3       = T.PanelBg
+	self.PanelBody.ScrollBarImageColor3   = T.RowBorder
 	self.StatusBar.BackgroundColor3  = T.StatusBar
 	self.StatusLabel.TextColor3      = T.StatusText
 	self.StatusDot.BackgroundColor3  = T.StatusDot
@@ -1144,11 +1158,14 @@ end
 -- Expand / Collapse  — use actual window width
 -- ─────────────────────────────────────────
 function VeroLib:Expand(panelHeight)
-	local w = self.Window.Size.X.Offset
-	local totalH = 44 + panelHeight + 26
-	self.PanelBody.Visible  = true
-	self.StatusBar.Visible  = true
-	self.StatusBar.Position = UDim2.fromOffset(0, 44 + panelHeight)
+	local w        = self.Window.Size.X.Offset
+	local clamped  = math.min(panelHeight, self.MaxPanelHeight)
+	local totalH   = 44 + clamped + 26
+	self.PanelBody.Visible = true
+	self.StatusBar.Visible = true
+	-- Lock panel frame to the clamped height; canvas grows via AutomaticCanvasSize
+	self.PanelBody.Size     = UDim2.new(1, 0, 0, clamped)
+	self.StatusBar.Position = UDim2.fromOffset(0, 44 + clamped)
 	TweenService:Create(self.Window, TweenInfo.new(0.18, Enum.EasingStyle.Quad), {
 		Size = UDim2.new(0, w, 0, totalH)
 	}):Play()
@@ -1243,7 +1260,6 @@ function VeroLib:_SetActiveTab(tab)
 
 	task.defer(function()
 		local panelH = tab.ContentFrame.AbsoluteSize.Y + 24
-		self.PanelBody.Size = UDim2.new(1, 0, 0, panelH)
 		self:Expand(panelH)
 	end)
 end
