@@ -1,0 +1,1268 @@
+-- VeroLib.lua
+-- Vero UI Library
+-- Place in ReplicatedStorage and require from a LocalScript in StarterPlayerScripts
+
+local VeroLib = {}
+VeroLib.__index = VeroLib
+
+-- ─────────────────────────────────────────
+-- Services
+-- ─────────────────────────────────────────
+local Players          = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService     = game:GetService("TweenService")
+
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui   = LocalPlayer:WaitForChild("PlayerGui")
+
+-- ─────────────────────────────────────────
+-- Themes
+-- ─────────────────────────────────────────
+local Themes = {
+	DarkGrey = {
+		Background   = Color3.fromRGB(24, 24, 27),
+		Bar          = Color3.fromRGB(31, 31, 35),
+		BarBorder    = Color3.fromRGB(46, 46, 50),
+		TabActive    = Color3.fromRGB(34, 34, 38),
+		TabInactive  = Color3.fromRGB(31, 31, 35),
+		TabText      = Color3.fromRGB(224, 224, 230),
+		TabTextMuted = Color3.fromRGB(96, 96, 104),
+		TabUnderline = Color3.fromRGB(208, 208, 216),
+		BrandText    = Color3.fromRGB(216, 216, 222),
+		PanelBg      = Color3.fromRGB(24, 24, 27),
+		RowBg        = Color3.fromRGB(28, 28, 32),
+		RowBorder    = Color3.fromRGB(42, 42, 46),
+		TextPrimary  = Color3.fromRGB(200, 200, 208),
+		TextMuted    = Color3.fromRGB(72, 72, 80),
+		StatusBar    = Color3.fromRGB(20, 20, 22),
+		StatusText   = Color3.fromRGB(56, 56, 64),
+		StatusDot    = Color3.fromRGB(112, 112, 120),
+		LogoColor    = Color3.fromRGB(192, 192, 200),
+		PillOn       = Color3.fromRGB(58, 58, 66),
+		PillOff      = Color3.fromRGB(34, 34, 40),
+		KnobOn       = Color3.fromRGB(216, 216, 224),
+		KnobOff      = Color3.fromRGB(54, 54, 64),
+		SliderFill   = Color3.fromRGB(96, 96, 104),
+		SliderTrack  = Color3.fromRGB(40, 40, 48),
+		BadgeBg      = Color3.fromRGB(34, 34, 40),
+		BadgeText    = Color3.fromRGB(160, 160, 168),
+		SectionTitle = Color3.fromRGB(64, 64, 72),
+		EndBtn       = Color3.fromRGB(80, 80, 88),
+	},
+	Midnight = {
+		Background   = Color3.fromRGB(14, 14, 16),
+		Bar          = Color3.fromRGB(18, 18, 22),
+		BarBorder    = Color3.fromRGB(36, 36, 40),
+		TabActive    = Color3.fromRGB(26, 26, 30),
+		TabInactive  = Color3.fromRGB(18, 18, 22),
+		TabText      = Color3.fromRGB(210, 210, 218),
+		TabTextMuted = Color3.fromRGB(72, 72, 80),
+		TabUnderline = Color3.fromRGB(180, 180, 190),
+		BrandText    = Color3.fromRGB(200, 200, 208),
+		PanelBg      = Color3.fromRGB(14, 14, 16),
+		RowBg        = Color3.fromRGB(20, 20, 24),
+		RowBorder    = Color3.fromRGB(34, 34, 38),
+		TextPrimary  = Color3.fromRGB(190, 190, 200),
+		TextMuted    = Color3.fromRGB(60, 60, 68),
+		StatusBar    = Color3.fromRGB(10, 10, 12),
+		StatusText   = Color3.fromRGB(48, 48, 56),
+		StatusDot    = Color3.fromRGB(90, 90, 100),
+		LogoColor    = Color3.fromRGB(170, 170, 180),
+		PillOn       = Color3.fromRGB(48, 48, 58),
+		PillOff      = Color3.fromRGB(26, 26, 32),
+		KnobOn       = Color3.fromRGB(200, 200, 210),
+		KnobOff      = Color3.fromRGB(46, 46, 56),
+		SliderFill   = Color3.fromRGB(80, 80, 90),
+		SliderTrack  = Color3.fromRGB(30, 30, 38),
+		BadgeBg      = Color3.fromRGB(26, 26, 32),
+		BadgeText    = Color3.fromRGB(140, 140, 150),
+		SectionTitle = Color3.fromRGB(52, 52, 60),
+		EndBtn       = Color3.fromRGB(64, 64, 72),
+	},
+	Purple = {
+		Background   = Color3.fromRGB(18, 15, 26),
+		Bar          = Color3.fromRGB(24, 20, 34),
+		BarBorder    = Color3.fromRGB(50, 42, 72),
+		TabActive    = Color3.fromRGB(30, 25, 44),
+		TabInactive  = Color3.fromRGB(24, 20, 34),
+		TabText      = Color3.fromRGB(210, 200, 240),
+		TabTextMuted = Color3.fromRGB(100, 88, 130),
+		TabUnderline = Color3.fromRGB(160, 130, 220),
+		BrandText    = Color3.fromRGB(210, 200, 240),
+		PanelBg      = Color3.fromRGB(18, 15, 26),
+		RowBg        = Color3.fromRGB(26, 22, 38),
+		RowBorder    = Color3.fromRGB(48, 40, 68),
+		TextPrimary  = Color3.fromRGB(200, 190, 225),
+		TextMuted    = Color3.fromRGB(80, 68, 108),
+		StatusBar    = Color3.fromRGB(12, 10, 18),
+		StatusText   = Color3.fromRGB(60, 50, 85),
+		StatusDot    = Color3.fromRGB(120, 100, 160),
+		LogoColor    = Color3.fromRGB(185, 165, 220),
+		PillOn       = Color3.fromRGB(80, 55, 130),
+		PillOff      = Color3.fromRGB(36, 30, 52),
+		KnobOn       = Color3.fromRGB(210, 190, 245),
+		KnobOff      = Color3.fromRGB(70, 58, 95),
+		SliderFill   = Color3.fromRGB(130, 100, 190),
+		SliderTrack  = Color3.fromRGB(44, 36, 64),
+		BadgeBg      = Color3.fromRGB(36, 28, 56),
+		BadgeText    = Color3.fromRGB(165, 145, 205),
+		SectionTitle = Color3.fromRGB(80, 65, 110),
+		EndBtn       = Color3.fromRGB(100, 85, 135),
+	},
+}
+VeroLib.Themes = Themes
+
+-- ─────────────────────────────────────────
+-- Helpers
+-- ─────────────────────────────────────────
+local function make(class, props, parent)
+	local inst = Instance.new(class)
+	for k, v in pairs(props) do inst[k] = v end
+	if parent then inst.Parent = parent end
+	return inst
+end
+
+local function corner(parent, radius)
+	return make("UICorner", { CornerRadius = UDim.new(0, radius or 8) }, parent)
+end
+
+local function stroke(parent, color, thickness)
+	return make("UIStroke", {
+		Color = color, Thickness = thickness or 0.5,
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	}, parent)
+end
+
+local function padding(parent, l, r, t, b)
+	return make("UIPadding", {
+		PaddingLeft   = UDim.new(0, l or 0),
+		PaddingRight  = UDim.new(0, r or 0),
+		PaddingTop    = UDim.new(0, t or 0),
+		PaddingBottom = UDim.new(0, b or 0),
+	}, parent)
+end
+
+local function listLayout(parent, dir, pad)
+	return make("UIListLayout", {
+		FillDirection = dir or Enum.FillDirection.Vertical,
+		SortOrder     = Enum.SortOrder.LayoutOrder,
+		Padding       = UDim.new(0, pad or 8),
+	}, parent)
+end
+
+-- ─────────────────────────────────────────
+-- Tab metatable
+-- ─────────────────────────────────────────
+local Tab = {}
+Tab.__index = Tab
+
+function Tab:_order()
+	self._layoutOrder = (self._layoutOrder or 0) + 1
+	return self._layoutOrder
+end
+
+function Tab:_row(height)
+	local T   = self._window.Theme
+	local row = make("Frame", {
+		Size             = UDim2.new(1, 0, 0, height or 44),
+		BackgroundColor3 = T.RowBg,
+		BorderSizePixel  = 0,
+		ZIndex           = 4,
+		LayoutOrder      = self:_order(),
+	}, self.ContentFrame)
+	corner(row)
+	stroke(row, T.RowBorder)
+	-- Register row so SetTheme can recolor it
+	table.insert(self._rows, { frame = row, type = "row" })
+	return row
+end
+
+-- AddSection
+function Tab:AddSection(title)
+	local T   = self._window.Theme
+	local lbl = make("TextLabel", {
+		Size                 = UDim2.new(1, 0, 0, 18),
+		BackgroundTransparency = 1,
+		Text                 = title:upper(),
+		TextColor3           = T.SectionTitle,
+		Font                 = Enum.Font.GothamMedium,
+		TextSize             = 10,
+		TextXAlignment       = Enum.TextXAlignment.Left,
+		ZIndex               = 4,
+		LayoutOrder          = self:_order(),
+	}, self.ContentFrame)
+	table.insert(self._rows, { frame = lbl, type = "section" })
+end
+
+-- AddSeparator
+function Tab:AddSeparator()
+	local T   = self._window.Theme
+	local sep = make("Frame", {
+		Size             = UDim2.new(1, 0, 0, 1),
+		BackgroundColor3 = T.RowBorder,
+		BorderSizePixel  = 0,
+		ZIndex           = 4,
+		LayoutOrder      = self:_order(),
+	}, self.ContentFrame)
+	corner(sep, 1)
+	table.insert(self._rows, { frame = sep, type = "separator" })
+end
+
+-- AddToggle
+function Tab:AddToggle(name, desc, default, callback)
+	local T     = self._window.Theme
+	local value = default or false
+	local row   = self:_row(44)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -60, 0, 16), Position = UDim2.fromOffset(13, 8),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+	make("TextLabel", {
+		Size = UDim2.new(1, -60, 0, 14), Position = UDim2.fromOffset(13, 24),
+		BackgroundTransparency = 1, Text = desc or "", TextColor3 = T.TextMuted,
+		Font = Enum.Font.Gotham, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local pill = make("Frame", {
+		Size = UDim2.fromOffset(36, 20), AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundColor3 = value and T.PillOn or T.PillOff,
+		BorderSizePixel = 0, ZIndex = 5,
+	}, row)
+	corner(pill, 10)
+	local pillStroke = stroke(pill, value and T.KnobOn or T.RowBorder)
+
+	local knob = make("Frame", {
+		Size = UDim2.fromOffset(14, 14), AnchorPoint = Vector2.new(0, 0.5),
+		Position = value and UDim2.new(1, -17, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
+		BackgroundColor3 = value and T.KnobOn or T.KnobOff,
+		BorderSizePixel = 0, ZIndex = 6,
+	}, pill)
+	corner(knob, 10)
+
+	local tw = TweenInfo.new(0.15, Enum.EasingStyle.Quad)
+	local function refresh()
+		local t = self._window.Theme
+		TweenService:Create(pill, tw, { BackgroundColor3 = value and t.PillOn or t.PillOff }):Play()
+		TweenService:Create(knob, tw, {
+			BackgroundColor3 = value and t.KnobOn or t.KnobOff,
+			Position = value and UDim2.new(1, -17, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
+		}):Play()
+	end
+
+	make("TextButton", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Text = "", ZIndex = 7,
+	}, row).MouseButton1Click:Connect(function()
+		value = not value
+		refresh()
+		if callback then callback(value) end
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.type      = "toggle"
+	entry.pill      = pill
+	entry.pillStroke = pillStroke
+	entry.knob      = knob
+	entry.getValue  = function() return value end
+	entry.nameLabel = row:FindFirstChild("TextLabel") -- first child
+	-- Collect all text labels in this row for recoloring
+	entry.rowLabels = row:GetChildren()
+
+	local obj = {}
+	function obj:SetValue(v) value = v refresh() end
+	function obj:GetValue() return value end
+	return obj
+end
+
+-- AddSlider
+function Tab:AddSlider(name, min, max, default, callback)
+	local T     = self._window.Theme
+	local value = math.clamp(default or min, min, max)
+	local row   = self:_row(54)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -60, 0, 16), Position = UDim2.fromOffset(13, 10),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local valBadge = make("TextLabel", {
+		Size = UDim2.fromOffset(44, 18), AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -13, 0, 8),
+		BackgroundColor3 = T.BadgeBg, BorderSizePixel = 0,
+		Text = tostring(value), TextColor3 = T.BadgeText,
+		Font = Enum.Font.GothamMedium, TextSize = 11, ZIndex = 5,
+	}, row)
+	corner(valBadge, 4)
+	stroke(valBadge, T.RowBorder)
+
+	local track = make("Frame", {
+		Size = UDim2.new(1, -26, 0, 3), Position = UDim2.new(0, 13, 0, 40),
+		BackgroundColor3 = T.SliderTrack, BorderSizePixel = 0, ZIndex = 5,
+	}, row)
+	corner(track, 2)
+
+	local pct  = (value - min) / (max - min)
+	local fill = make("Frame", {
+		Size = UDim2.new(pct, 0, 1, 0),
+		BackgroundColor3 = T.SliderFill, BorderSizePixel = 0, ZIndex = 6,
+	}, track)
+	corner(fill, 2)
+
+	local thumb = make("Frame", {
+		Size = UDim2.fromOffset(11, 11), AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.new(pct, 0, 0.5, 0),
+		BackgroundColor3 = T.KnobOn, BorderSizePixel = 0, ZIndex = 7,
+	}, track)
+	corner(thumb, 10)
+
+	local function setSlider(v)
+		value           = math.clamp(math.round(v), min, max)
+		local p         = (value - min) / (max - min)
+		fill.Size       = UDim2.new(p, 0, 1, 0)
+		thumb.Position  = UDim2.new(p, 0, 0.5, 0)
+		valBadge.Text   = tostring(value)
+		if callback then callback(value) end
+	end
+
+	local dragging = false
+	local hitbox = make("TextButton", {
+		Size = UDim2.new(1, 0, 0, 20), Position = UDim2.new(0, 13, 0, 32),
+		BackgroundTransparency = 1, Text = "", ZIndex = 8,
+	}, row)
+	hitbox.MouseButton1Down:Connect(function() dragging = true end)
+	UserInputService.InputEnded:Connect(function(i)
+		if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+	end)
+	UserInputService.InputChanged:Connect(function(i)
+		if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+			local rel = math.clamp((i.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
+			setSlider(min + rel * (max - min))
+		end
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.type      = "slider"
+	entry.valBadge  = valBadge
+	entry.track     = track
+	entry.fill      = fill
+	entry.thumb     = thumb
+
+	local obj = {}
+	function obj:SetValue(v) setSlider(v) end
+	function obj:GetValue() return value end
+	return obj
+end
+
+-- AddButton
+function Tab:AddButton(name, desc, label, callback)
+	local T   = self._window.Theme
+	local row = self:_row(44)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -80, 0, 16), Position = UDim2.fromOffset(13, 8),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+	make("TextLabel", {
+		Size = UDim2.new(1, -80, 0, 14), Position = UDim2.fromOffset(13, 24),
+		BackgroundTransparency = 1, Text = desc or "", TextColor3 = T.TextMuted,
+		Font = Enum.Font.Gotham, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local btn = make("TextButton", {
+		Size = UDim2.fromOffset(48, 24), AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundColor3 = T.BadgeBg, BorderSizePixel = 0,
+		Text = label or "run", TextColor3 = T.BadgeText,
+		Font = Enum.Font.GothamMedium, TextSize = 11, ZIndex = 6,
+	}, row)
+	corner(btn, 6)
+	stroke(btn, T.RowBorder)
+	btn.MouseButton1Click:Connect(function()
+		if callback then callback() end
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.type = "button"
+	entry.btn  = btn
+end
+
+-- AddDropdown
+function Tab:AddDropdown(name, options, default, callback)
+	local T     = self._window.Theme
+	local value = default or options[1]
+	local open  = false
+
+	local wrapper = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 44), AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = T.RowBg, BorderSizePixel = 0,
+		ClipsDescendants = true, ZIndex = 4, LayoutOrder = self:_order(),
+	}, self.ContentFrame)
+	corner(wrapper)
+	stroke(wrapper, T.RowBorder)
+	table.insert(self._rows, { frame = wrapper, type = "dropdown" })
+
+	local header = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 44),
+		BackgroundTransparency = 1, ZIndex = 5,
+	}, wrapper)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -80, 0, 16), Position = UDim2.fromOffset(13, 14),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 6,
+	}, header)
+
+	local valBadge = make("Frame", {
+		Size = UDim2.fromOffset(0, 22), AutomaticSize = Enum.AutomaticSize.X,
+		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundColor3 = T.BadgeBg, BorderSizePixel = 0, ZIndex = 6,
+	}, header)
+	corner(valBadge, 4)
+	stroke(valBadge, T.RowBorder)
+	padding(valBadge, 8, 8)
+
+	local valLabel = make("TextLabel", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Text = value, TextColor3 = T.BadgeText,
+		Font = Enum.Font.GothamMedium, TextSize = 11, ZIndex = 7,
+	}, valBadge)
+
+	local divider = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 1), Position = UDim2.fromOffset(0, 44),
+		BackgroundColor3 = T.RowBorder, BorderSizePixel = 0, ZIndex = 5,
+		Visible = false,
+	}, wrapper)
+
+	local optList = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y,
+		Position = UDim2.fromOffset(0, 45),
+		BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 5,
+		Visible = false,
+	}, wrapper)
+	listLayout(optList, Enum.FillDirection.Vertical, 0)
+
+	local optBtns = {}
+	for i, opt in ipairs(options) do
+		local isSelected = opt == value
+		local optBtn = make("TextButton", {
+			Size = UDim2.new(1, 0, 0, 32),
+			BackgroundColor3 = isSelected and T.BadgeBg or T.RowBg,
+			BorderSizePixel = 0, Text = opt,
+			TextColor3 = isSelected and T.TextPrimary or T.TextMuted,
+			Font = isSelected and Enum.Font.GothamMedium or Enum.Font.Gotham,
+			TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left,
+			ZIndex = 6, LayoutOrder = i,
+		}, optList)
+		padding(optBtn, 13)
+		optBtns[opt] = optBtn
+
+		optBtn.MouseButton1Click:Connect(function()
+			value         = opt
+			valLabel.Text = opt
+			for o, b in pairs(optBtns) do
+				b.BackgroundColor3 = o == opt and T.BadgeBg or T.RowBg
+				b.TextColor3       = o == opt and T.TextPrimary or T.TextMuted
+				b.Font             = o == opt and Enum.Font.GothamMedium or Enum.Font.Gotham
+			end
+			if callback then callback(value) end
+		end)
+	end
+
+	make("TextButton", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Text = "", ZIndex = 8,
+	}, header).MouseButton1Click:Connect(function()
+		open            = not open
+		optList.Visible = open
+		divider.Visible = open
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.valBadge = valBadge
+	entry.valLabel = valLabel
+	entry.divider  = divider
+	entry.optBtns  = optBtns
+	entry.getValue = function() return value end
+
+	local obj = {}
+	function obj:SetValue(v)
+		value = v
+		valLabel.Text = v
+		for o, b in pairs(optBtns) do
+			b.BackgroundColor3 = o == v and T.BadgeBg or T.RowBg
+			b.TextColor3       = o == v and T.TextPrimary or T.TextMuted
+			b.Font             = o == v and Enum.Font.GothamMedium or Enum.Font.Gotham
+		end
+	end
+	function obj:GetValue() return value end
+	return obj
+end
+
+-- AddKeybind
+function Tab:AddKeybind(name, desc, default, callback)
+	local T       = self._window.Theme
+	local key     = default or Enum.KeyCode.Unknown
+	local binding = false
+	local row     = self:_row(44)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -80, 0, 16), Position = UDim2.fromOffset(13, 8),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+	make("TextLabel", {
+		Size = UDim2.new(1, -80, 0, 14), Position = UDim2.fromOffset(13, 24),
+		BackgroundTransparency = 1, Text = desc or "click badge to rebind",
+		TextColor3 = T.TextMuted, Font = Enum.Font.Gotham, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local badge = make("TextButton", {
+		Size = UDim2.fromOffset(56, 24), AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundColor3 = T.BadgeBg, BorderSizePixel = 0,
+		Text = key.Name, TextColor3 = T.BadgeText,
+		Font = Enum.Font.Code, TextSize = 11, ZIndex = 6,
+	}, row)
+	corner(badge, 4)
+	stroke(badge, T.RowBorder)
+
+	badge.MouseButton1Click:Connect(function()
+		binding          = true
+		badge.Text       = "..."
+		badge.TextColor3 = T.TextPrimary
+	end)
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		if binding and input.UserInputType == Enum.UserInputType.Keyboard then
+			binding          = false
+			key              = input.KeyCode
+			badge.Text       = key.Name
+			badge.TextColor3 = self._window.Theme.BadgeText
+			if callback then callback(key) end
+		end
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.type  = "keybind"
+	entry.badge = badge
+
+	local obj = {}
+	function obj:GetKey() return key end
+	return obj
+end
+
+-- AddTextInput
+function Tab:AddTextInput(name, placeholder, callback)
+	local T   = self._window.Theme
+	local row = self:_row(60)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -26, 0, 16), Position = UDim2.fromOffset(13, 8),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local field = make("TextBox", {
+		Size = UDim2.new(1, -26, 0, 24), Position = UDim2.fromOffset(13, 28),
+		BackgroundColor3 = T.PanelBg, BorderSizePixel = 0,
+		PlaceholderText = placeholder or "", PlaceholderColor3 = T.TextMuted,
+		Text = "", TextColor3 = T.TextPrimary,
+		Font = Enum.Font.Gotham, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		ClearTextOnFocus = false, ZIndex = 5,
+	}, row)
+	corner(field, 6)
+	stroke(field, T.RowBorder)
+	padding(field, 8, 8)
+
+	field.FocusLost:Connect(function(enterPressed)
+		if callback then callback(field.Text, enterPressed) end
+	end)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.type  = "textinput"
+	entry.field = field
+
+	local obj = {}
+	function obj:GetValue() return field.Text end
+	function obj:SetValue(v) field.Text = v end
+	return obj
+end
+
+-- AddColorPicker
+function Tab:AddColorPicker(name, desc, swatches, default, callback)
+	local T     = self._window.Theme
+	local value = default or swatches[1]
+	local row   = self:_row(44)
+
+	make("TextLabel", {
+		Size = UDim2.new(1, -140, 0, 16), Position = UDim2.fromOffset(13, 8),
+		BackgroundTransparency = 1, Text = name, TextColor3 = T.TextPrimary,
+		Font = Enum.Font.GothamMedium, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+	make("TextLabel", {
+		Size = UDim2.new(1, -140, 0, 14), Position = UDim2.fromOffset(13, 24),
+		BackgroundTransparency = 1, Text = desc or "", TextColor3 = T.TextMuted,
+		Font = Enum.Font.Gotham, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, row)
+
+	local swatchFrame = make("Frame", {
+		Size = UDim2.fromOffset(0, 20), AutomaticSize = Enum.AutomaticSize.X,
+		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundTransparency = 1, ZIndex = 5,
+	}, row)
+	make("UIListLayout", {
+		FillDirection = Enum.FillDirection.Horizontal,
+		VerticalAlignment = Enum.VerticalAlignment.Center,
+		Padding = UDim.new(0, 5),
+	}, swatchFrame)
+
+	local swatchData = {}
+	for _, color in ipairs(swatches) do
+		local s = make("TextButton", {
+			Size = UDim2.fromOffset(18, 18), BackgroundColor3 = color,
+			BorderSizePixel = 0, Text = "", ZIndex = 6,
+		}, swatchFrame)
+		corner(s, 4)
+		local st = stroke(s, color == value and T.TextPrimary or T.RowBorder,
+			color == value and 1.5 or 0.5)
+		swatchData[s] = { color = color, stroke = st }
+
+		s.MouseButton1Click:Connect(function()
+			value = color
+			local t = self._window.Theme
+			for btn, data in pairs(swatchData) do
+				data.stroke.Color     = data.color == value and t.TextPrimary or t.RowBorder
+				data.stroke.Thickness = data.color == value and 1.5 or 0.5
+			end
+			if callback then callback(value) end
+		end)
+	end
+
+	local obj = {}
+	function obj:GetValue() return value end
+	function obj:SetValue(c)
+		value = c
+		local t = self._window.Theme
+		for btn, data in pairs(swatchData) do
+			data.stroke.Color     = data.color == c and t.TextPrimary or t.RowBorder
+			data.stroke.Thickness = data.color == c and 1.5 or 0.5
+		end
+	end
+	return obj
+end
+
+-- AddSearch
+function Tab:AddSearch(placeholder, onChange)
+	local T   = self._window.Theme
+	local row = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 34),
+		BackgroundColor3 = T.RowBg, BorderSizePixel = 0,
+		ZIndex = 4, LayoutOrder = self:_order(),
+	}, self.ContentFrame)
+	corner(row)
+	stroke(row, T.RowBorder)
+	padding(row, 10, 10)
+	table.insert(self._rows, { frame = row, type = "search" })
+
+	make("TextLabel", {
+		Size = UDim2.fromOffset(16, 34), BackgroundTransparency = 1,
+		Text = "⌕", TextColor3 = T.TextMuted,
+		Font = Enum.Font.GothamMedium, TextSize = 16, ZIndex = 5,
+	}, row)
+
+	local field = make("TextBox", {
+		Size = UDim2.new(1, -24, 1, 0), Position = UDim2.fromOffset(24, 0),
+		BackgroundTransparency = 1,
+		PlaceholderText = placeholder or "search...",
+		PlaceholderColor3 = T.TextMuted, Text = "",
+		TextColor3 = T.TextPrimary, Font = Enum.Font.Gotham, TextSize = 12,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		ClearTextOnFocus = false, ZIndex = 5,
+	}, row)
+
+	-- Register for theme updates
+	local entry = self._rows[#self._rows]
+	entry.field = field
+
+	field:GetPropertyChangedSignal("Text"):Connect(function()
+		if onChange then onChange(field.Text) end
+	end)
+
+	local obj = {}
+	function obj:GetValue() return field.Text end
+	function obj:Clear() field.Text = "" end
+	return obj
+end
+
+-- ─────────────────────────────────────────
+-- Tab:ApplyTheme  — recolors all registered rows
+-- ─────────────────────────────────────────
+function Tab:ApplyTheme(T)
+	for _, entry in ipairs(self._rows) do
+		local f = entry.frame
+		local t = entry.type
+
+		-- Every row frame background + border
+		if f and f:IsA("Frame") and t ~= "separator" and t ~= "section" then
+			f.BackgroundColor3 = T.RowBg
+			local s = f:FindFirstChildOfClass("UIStroke")
+			if s then s.Color = T.RowBorder end
+		end
+
+		if t == "separator" then
+			f.BackgroundColor3 = T.RowBorder
+
+		elseif t == "section" then
+			f.TextColor3 = T.SectionTitle
+
+		elseif t == "toggle" then
+			-- Recolor text labels inside the row
+			for _, child in ipairs(f:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = child.Font == Enum.Font.GothamMedium
+						and T.TextPrimary or T.TextMuted
+				end
+			end
+			-- Pill + knob recolored based on current value
+			local on = entry.getValue()
+			entry.pill.BackgroundColor3 = on and T.PillOn or T.PillOff
+			entry.knob.BackgroundColor3 = on and T.KnobOn or T.KnobOff
+			if entry.pillStroke then
+				entry.pillStroke.Color = on and T.KnobOn or T.RowBorder
+			end
+
+		elseif t == "slider" then
+			for _, child in ipairs(f:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = child.Font == Enum.Font.GothamMedium
+						and T.TextPrimary or T.TextMuted
+				end
+			end
+			entry.valBadge.BackgroundColor3 = T.BadgeBg
+			entry.valBadge.TextColor3       = T.BadgeText
+			entry.track.BackgroundColor3    = T.SliderTrack
+			entry.fill.BackgroundColor3     = T.SliderFill
+			entry.thumb.BackgroundColor3    = T.KnobOn
+			local bs = entry.valBadge:FindFirstChildOfClass("UIStroke")
+			if bs then bs.Color = T.RowBorder end
+
+		elseif t == "button" then
+			for _, child in ipairs(f:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = child.Font == Enum.Font.GothamMedium
+						and T.TextPrimary or T.TextMuted
+				end
+			end
+			entry.btn.BackgroundColor3 = T.BadgeBg
+			entry.btn.TextColor3       = T.BadgeText
+			local bs = entry.btn:FindFirstChildOfClass("UIStroke")
+			if bs then bs.Color = T.RowBorder end
+
+		elseif t == "keybind" then
+			for _, child in ipairs(f:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = child.Font == Enum.Font.GothamMedium
+						and T.TextPrimary or T.TextMuted
+				end
+			end
+			entry.badge.BackgroundColor3 = T.BadgeBg
+			entry.badge.TextColor3       = T.BadgeText
+			local bs = entry.badge:FindFirstChildOfClass("UIStroke")
+			if bs then bs.Color = T.RowBorder end
+
+		elseif t == "dropdown" then
+			for _, child in ipairs(f:GetDescendants()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = child.Font == Enum.Font.GothamMedium
+						and T.TextPrimary or T.TextMuted
+				end
+			end
+			entry.valBadge.BackgroundColor3 = T.BadgeBg
+			entry.valLabel.TextColor3       = T.BadgeText
+			entry.divider.BackgroundColor3  = T.RowBorder
+			local cur = entry.getValue()
+			for o, b in pairs(entry.optBtns) do
+				b.BackgroundColor3 = o == cur and T.BadgeBg or T.RowBg
+				b.TextColor3       = o == cur and T.TextPrimary or T.TextMuted
+			end
+
+		elseif t == "textinput" or t == "search" then
+			for _, child in ipairs(f:GetChildren()) do
+				if child:IsA("TextLabel") then
+					child.TextColor3 = T.TextPrimary
+				end
+			end
+			if entry.field then
+				entry.field.TextColor3        = T.TextPrimary
+				entry.field.PlaceholderColor3 = T.TextMuted
+				if t == "textinput" then
+					entry.field.BackgroundColor3 = T.PanelBg
+				end
+			end
+		end
+	end
+end
+
+-- ─────────────────────────────────────────
+-- VeroLib.new
+-- ─────────────────────────────────────────
+function VeroLib.new(themeName)
+	local self = setmetatable({}, VeroLib)
+	self.Theme     = Themes[themeName or "DarkGrey"]
+	self.Tabs      = {}
+	self.ActiveTab = nil
+	self.Expanded  = false
+
+	local T = self.Theme
+
+	self.ScreenGui = make("ScreenGui", {
+		Name = "VeroGui", ResetOnSpawn = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	}, PlayerGui)
+
+	self.Window = make("Frame", {
+		Name = "Window",
+		Size = UDim2.new(0, 440, 0, 44),
+		Position = UDim2.new(0.5, -230, 0, 24),
+		BackgroundColor3 = T.Background,
+		BorderSizePixel = 0, ClipsDescendants = true,
+	}, self.ScreenGui)
+	corner(self.Window, 10)
+	stroke(self.Window, T.BarBorder, 1)
+
+	-- Bar
+	self.Bar = make("Frame", {
+		Name = "Bar", Size = UDim2.new(1, 0, 0, 44),
+		BackgroundColor3 = T.Bar, BorderSizePixel = 0, ZIndex = 4,
+	}, self.Window)
+	corner(self.Bar, 10)
+
+	-- Brand
+	local brand = make("Frame", {
+		Name = "Brand", Size = UDim2.new(0, 85, 1, 0),
+		BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 5,
+	}, self.Bar)
+	stroke(brand, T.BarBorder, 1)
+
+	local logoContainer = make("Frame", {
+		Size = UDim2.fromOffset(22, 22), AnchorPoint = Vector2.new(0, 0.5),
+		Position = UDim2.new(0, 14, 0.5, 0),
+		BackgroundTransparency = 1, ZIndex = 5,
+	}, brand)
+
+	local outerDiamond = make("Frame", {
+		Size = UDim2.fromOffset(16, 16), AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		BackgroundColor3 = T.LogoColor, BorderSizePixel = 0,
+		Rotation = 45, ZIndex = 5,
+	}, logoContainer)
+	corner(outerDiamond, 2)
+	self._outerDiamond = outerDiamond
+
+	local innerDiamond = make("Frame", {
+		Size = UDim2.fromOffset(7, 7), AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		BackgroundColor3 = T.Bar, BorderSizePixel = 0,
+		Rotation = 0, ZIndex = 6,
+	}, outerDiamond)
+	corner(innerDiamond, 1)
+	self._innerDiamond = innerDiamond
+
+	local brandLabel = make("TextLabel", {
+		Name = "BrandName", Size = UDim2.new(1, -48, 1, 0),
+		Position = UDim2.fromOffset(42, 0), BackgroundTransparency = 1,
+		Text = "vero", TextColor3 = T.BrandText,
+		Font = Enum.Font.GothamMedium, TextSize = 13,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, brand)
+	self._brandLabel = brandLabel
+
+	-- Tab container
+	self.TabContainer = make("Frame", {
+		Name = "TabContainer", Size = UDim2.new(1, -161, 1, 0),
+		Position = UDim2.fromOffset(86, 0),
+		BackgroundTransparency = 1, BorderSizePixel = 0,
+		ZIndex = 5, ClipsDescendants = true,
+	}, self.Bar)
+	listLayout(self.TabContainer, Enum.FillDirection.Horizontal, 0)
+
+	-- End buttons
+	local endFrame = make("Frame", {
+		Name = "EndButtons",
+		Size = UDim2.new(0, 76, 0, 44),
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(.99, 0, 0, 0),
+		BackgroundTransparency = 1, ZIndex = 5,
+	}, self.Bar)
+	make("UIListLayout", {
+		FillDirection = Enum.FillDirection.Horizontal,
+		VerticalAlignment = Enum.VerticalAlignment.Center,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		Padding = UDim.new(0, 8),
+	}, endFrame)
+	padding(endFrame, 10, 10)
+	self._endFrame = endFrame
+
+	local function endBtn(text, order)
+		local b = make("TextButton", {
+			Size = UDim2.fromOffset(18, 18),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Text = text, TextColor3 = T.EndBtn,
+			Font = Enum.Font.GothamMedium, TextSize = 14,
+			ZIndex = 6, LayoutOrder = order,
+		}, endFrame)
+		return b
+	end
+
+	self.SettingsBtn = endBtn("⚙", 1)
+	self.MinimizeBtn = endBtn("−", 2)
+	self.CloseBtn    = endBtn("X", 3)
+
+	-- Panel body
+	self.PanelBody = make("Frame", {
+		Name = "PanelBody", Size = UDim2.new(1, 0, 0, 0),
+		Position = UDim2.fromOffset(0, 44),
+		BackgroundColor3 = T.PanelBg, BorderSizePixel = 0,
+		ZIndex = 3, Visible = false,
+	}, self.Window)
+	padding(self.PanelBody, 14, 14, 12, 12)
+	listLayout(self.PanelBody)
+
+	-- Status bar
+	self.StatusBar = make("Frame", {
+		Name = "StatusBar", Size = UDim2.new(1, 0, 0, 26),
+		BackgroundColor3 = T.StatusBar, BorderSizePixel = 0,
+		ZIndex = 3, Visible = false,
+	}, self.Window)
+	stroke(self.StatusBar, T.BarBorder, 1)
+	corner(self.StatusBar, 10)
+
+	local statusInner = make("Frame", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 4,
+	}, self.StatusBar)
+	padding(statusInner, 14, 14)
+
+	self.StatusDot = make("Frame", {
+		Size = UDim2.fromOffset(5, 5), AnchorPoint = Vector2.new(0, 0.5),
+		Position = UDim2.new(0, 0, 0.5, 0),
+		BackgroundColor3 = T.StatusDot, BorderSizePixel = 0, ZIndex = 5,
+	}, statusInner)
+	corner(self.StatusDot, 10)
+
+	self.StatusLabel = make("TextLabel", {
+		Size = UDim2.new(1, -60, 1, 0), Position = UDim2.fromOffset(16, 0),
+		BackgroundTransparency = 1, Text = "ready",
+		TextColor3 = T.StatusText, Font = Enum.Font.Gotham, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
+	}, statusInner)
+
+	make("TextLabel", {
+		Size = UDim2.new(0, 40, 1, 0), Position = UDim2.new(1, -40, 0, 0),
+		BackgroundTransparency = 1, Text = "vero",
+		TextColor3 = T.StatusText, Font = Enum.Font.GothamMedium, TextSize = 10,
+		TextXAlignment = Enum.TextXAlignment.Right, ZIndex = 5,
+	}, statusInner)
+
+	-- Drag
+	local dragging, dragStart, startPos
+	self.Bar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging  = true
+			dragStart = input.Position
+			startPos  = self.Window.Position
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local d = input.Position - dragStart
+			self.Window.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + d.X,
+				startPos.Y.Scale, startPos.Y.Offset + d.Y)
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	self.MinimizeBtn.MouseButton1Click:Connect(function() self:Collapse() end)
+	self.CloseBtn.MouseButton1Click:Connect(function() self.ScreenGui:Destroy() end)
+
+	self._settingsBuilt = false
+	self.SettingsBtn.MouseButton1Click:Connect(function()
+		if not self._settingsBuilt then
+			self:_BuildSettingsTab()
+			self._settingsBuilt = true
+		end
+		if self.ActiveTab == self._settingsTab then
+			self:Collapse()
+		else
+			self:_SetActiveTab(self._settingsTab)
+		end
+	end)
+
+	return self
+end
+
+-- ─────────────────────────────────────────
+-- _BuildSettingsTab
+-- ─────────────────────────────────────────
+function VeroLib:_BuildSettingsTab()
+	local tab = setmetatable({ _window = self, _layoutOrder = 0, _rows = {} }, Tab)
+	tab.Name  = "Settings"
+
+	local contentFrame = make("Frame", {
+		Name = "SettingsContent", Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1, BorderSizePixel = 0,
+		Visible = false, ZIndex = 3,
+	}, self.PanelBody)
+	listLayout(contentFrame)
+
+	local dummyBtn = make("TextButton", {
+		Size = UDim2.fromOffset(0, 0), BackgroundTransparency = 1,
+		Text = "", Visible = false,
+	}, self.Bar)
+	tab.Button       = dummyBtn
+	tab.Label        = make("TextLabel", {
+		Text = "", BackgroundTransparency = 1, Size = UDim2.fromOffset(0, 0),
+	}, dummyBtn)
+	tab.Underline    = make("Frame", {
+		Size = UDim2.fromOffset(0, 0), BackgroundTransparency = 1, Visible = false,
+	}, dummyBtn)
+	tab.ContentFrame = contentFrame
+
+	table.insert(self.Tabs, tab)
+	self._settingsTab = tab
+
+	tab:AddSection("theme")
+	local themeMap = {
+		{ key = "DarkGrey", label = "dark grey" },
+		{ key = "Midnight", label = "midnight"  },
+		{ key = "Purple",   label = "purple"    },
+	}
+	for _, t in ipairs(themeMap) do
+		tab:AddButton(t.label, "switch ui theme", "apply", function()
+			self:SetTheme(t.key)
+			self:SetStatus("theme: " .. t.label)
+		end)
+	end
+
+	tab:AddSection("keybinds")
+	tab:AddKeybind("toggle menu", "show / hide vero", Enum.KeyCode.RightShift, function(key)
+		self:BindToggleKey(key)
+		self:SetStatus("toggle key: " .. key.Name)
+	end)
+
+	tab:AddSection("general")
+	tab:AddToggle("always on top", "bar stays above game ui", true, function(v)
+		self.ScreenGui.DisplayOrder = v and 10 or 0
+	end)
+	tab:AddToggle("notifications", "mod status changes", false, function(v)
+		self._notificationsEnabled = v
+	end)
+	tab:AddSeparator()
+	tab:AddButton("close vero", "destroy the ui entirely", "close", function()
+		self.ScreenGui:Destroy()
+	end)
+end
+
+-- ─────────────────────────────────────────
+-- SetTheme
+-- ─────────────────────────────────────────
+function VeroLib:SetTheme(themeName)
+	local T = Themes[themeName]
+	if not T then return end
+	self.Theme = T
+
+	-- Top-level surfaces
+	self.Window.BackgroundColor3     = T.Background
+	self.Bar.BackgroundColor3        = T.Bar
+	self.PanelBody.BackgroundColor3  = T.PanelBg
+	self.StatusBar.BackgroundColor3  = T.StatusBar
+	self.StatusLabel.TextColor3      = T.StatusText
+	self.StatusDot.BackgroundColor3  = T.StatusDot
+	self._brandLabel.TextColor3      = T.BrandText
+	self._outerDiamond.BackgroundColor3 = T.LogoColor
+	self._innerDiamond.BackgroundColor3 = T.Bar
+
+	-- End buttons
+	for _, b in ipairs(self._endFrame:GetChildren()) do
+		if b:IsA("TextButton") then
+			b.TextColor3 = T.EndBtn
+		end
+	end
+
+	-- Window + bar strokes
+	local winStroke = self.Window:FindFirstChildOfClass("UIStroke")
+	if winStroke then winStroke.Color = T.BarBorder end
+	local barStroke = self.Bar:FindFirstChildOfClass("UIStroke")
+	if barStroke then barStroke.Color = T.BarBorder end
+	local sbStroke = self.StatusBar:FindFirstChildOfClass("UIStroke")
+	if sbStroke then sbStroke.Color = T.BarBorder end
+
+	-- Tab buttons
+	for _, t in ipairs(self.Tabs) do
+		local active = (t == self.ActiveTab)
+		t.Button.BackgroundColor3    = active and T.TabActive or T.TabInactive
+		t.Label.TextColor3           = active and T.TabText   or T.TabTextMuted
+		t.Underline.BackgroundColor3 = T.TabUnderline
+		local ts = t.Button:FindFirstChildOfClass("UIStroke")
+		if ts then ts.Color = T.BarBorder end
+		-- Recolor all row-level components within each tab
+		if t.ApplyTheme then
+			t:ApplyTheme(T)
+		end
+	end
+end
+
+-- ─────────────────────────────────────────
+-- Expand / Collapse  — use actual window width
+-- ─────────────────────────────────────────
+function VeroLib:Expand(panelHeight)
+	local w = self.Window.Size.X.Offset
+	local totalH = 44 + panelHeight + 26
+	self.PanelBody.Visible  = true
+	self.StatusBar.Visible  = true
+	self.StatusBar.Position = UDim2.fromOffset(0, 44 + panelHeight)
+	TweenService:Create(self.Window, TweenInfo.new(0.18, Enum.EasingStyle.Quad), {
+		Size = UDim2.new(0, w, 0, totalH)
+	}):Play()
+	self.Expanded = true
+end
+
+function VeroLib:Collapse()
+	local w = self.Window.Size.X.Offset
+	TweenService:Create(self.Window, TweenInfo.new(0.18, Enum.EasingStyle.Quad), {
+		Size = UDim2.new(0, w, 0, 44)
+	}):Play()
+	task.delay(0.18, function()
+		self.PanelBody.Visible = false
+		self.StatusBar.Visible = false
+	end)
+	self.Expanded  = false
+	self.ActiveTab = nil
+end
+
+-- ─────────────────────────────────────────
+-- AddTab
+-- ─────────────────────────────────────────
+function VeroLib:AddTab(name)
+	local T   = self.Theme
+	local tab = setmetatable({ _window = self, _layoutOrder = 0, _rows = {} }, Tab)
+	tab.Name  = name
+
+	local tabBtn = make("TextButton", {
+		Name = name .. "Tab", Size = UDim2.new(0, 0, 1, 0),
+		AutomaticSize = Enum.AutomaticSize.X,
+		BackgroundColor3 = T.TabInactive, BorderSizePixel = 0,
+		Text = "", ZIndex = 5, LayoutOrder = #self.Tabs + 1,
+	}, self.TabContainer)
+	stroke(tabBtn, T.BarBorder, 1)
+	padding(tabBtn, 16, 16)
+
+	local tabLabel = make("TextLabel", {
+		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
+		Text = name:lower(), TextColor3 = T.TabTextMuted,
+		Font = Enum.Font.Gotham, TextSize = 12, ZIndex = 6,
+	}, tabBtn)
+
+	local underline = make("Frame", {
+		Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2),
+		BackgroundColor3 = T.TabUnderline, BorderSizePixel = 0,
+		Visible = false, ZIndex = 7,
+	}, tabBtn)
+
+	local contentFrame = make("Frame", {
+		Name = name .. "Content", Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1, BorderSizePixel = 0,
+		Visible = false, ZIndex = 3,
+	}, self.PanelBody)
+	listLayout(contentFrame)
+
+	tab.Button       = tabBtn
+	tab.Label        = tabLabel
+	tab.Underline    = underline
+	tab.ContentFrame = contentFrame
+
+	tabBtn.MouseButton1Click:Connect(function()
+		if self.ActiveTab == tab then
+			self:Collapse()
+			return
+		end
+		self:_SetActiveTab(tab)
+	end)
+
+	table.insert(self.Tabs, tab)
+	return tab
+end
+
+-- ─────────────────────────────────────────
+-- _SetActiveTab
+-- ─────────────────────────────────────────
+function VeroLib:_SetActiveTab(tab)
+	local T = self.Theme
+	for _, t in ipairs(self.Tabs) do
+		t.Button.BackgroundColor3 = T.TabInactive
+		t.Label.TextColor3        = T.TabTextMuted
+		t.Label.Font              = Enum.Font.Gotham
+		t.Underline.Visible       = false
+		t.ContentFrame.Visible    = false
+	end
+	tab.Button.BackgroundColor3 = T.TabActive
+	tab.Label.TextColor3        = T.TabText
+	tab.Label.Font              = Enum.Font.GothamMedium
+	tab.Underline.Visible       = true
+	tab.ContentFrame.Visible    = true
+	self.ActiveTab              = tab
+
+	task.defer(function()
+		local panelH = tab.ContentFrame.AbsoluteSize.Y + 24
+		self.PanelBody.Size = UDim2.new(1, 0, 0, panelH)
+		self:Expand(panelH)
+	end)
+end
+
+-- ─────────────────────────────────────────
+-- SetStatus / BindToggleKey
+-- ─────────────────────────────────────────
+function VeroLib:SetStatus(text)
+	self.StatusLabel.Text = text
+end
+
+function VeroLib:BindToggleKey(keyCode)
+	keyCode = keyCode or Enum.KeyCode.RightShift
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		if gpe then return end
+		if input.KeyCode == keyCode then
+			self.ScreenGui.Enabled = not self.ScreenGui.Enabled
+		end
+	end)
+end
+
+return VeroLib
