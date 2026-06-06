@@ -11,10 +11,22 @@ VeroLib.__index = VeroLib
 local Players          = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService     = game:GetService("TweenService")
-local HttpService       = game:GetService("HttpService")
+local HttpService      = game:GetService("HttpService")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui   = LocalPlayer:WaitForChild("PlayerGui")
+
+-- ─────────────────────────────────────────
+-- Tween presets
+-- ─────────────────────────────────────────
+local TW_FAST   = TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local TW_MED    = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local TW_SLOW   = TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local TW_SPRING = TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+local function tween(inst, info, props)
+	TweenService:Create(inst, info, props):Play()
+end
 
 -- ─────────────────────────────────────────
 -- Themes
@@ -32,6 +44,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(216, 216, 222),
 		PanelBg      = Color3.fromRGB(24, 24, 27),
 		RowBg        = Color3.fromRGB(28, 28, 32),
+		RowHover     = Color3.fromRGB(34, 34, 38),
 		RowBorder    = Color3.fromRGB(42, 42, 46),
 		TextPrimary  = Color3.fromRGB(200, 200, 208),
 		TextMuted    = Color3.fromRGB(72, 72, 80),
@@ -46,9 +59,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(96, 96, 104),
 		SliderTrack  = Color3.fromRGB(40, 40, 48),
 		BadgeBg      = Color3.fromRGB(34, 34, 40),
+		BadgeHover   = Color3.fromRGB(46, 46, 54),
 		BadgeText    = Color3.fromRGB(160, 160, 168),
 		SectionTitle = Color3.fromRGB(64, 64, 72),
 		EndBtn       = Color3.fromRGB(80, 80, 88),
+		EndBtnHover  = Color3.fromRGB(140, 140, 150),
+		TabHover     = Color3.fromRGB(38, 38, 42),
 	},
 	Midnight = {
 		Background   = Color3.fromRGB(10, 10, 12),
@@ -62,6 +78,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(200, 200, 208),
 		PanelBg      = Color3.fromRGB(10, 10, 12),
 		RowBg        = Color3.fromRGB(17, 17, 24),
+		RowHover     = Color3.fromRGB(24, 24, 32),
 		RowBorder    = Color3.fromRGB(30, 30, 38),
 		TextPrimary  = Color3.fromRGB(190, 190, 200),
 		TextMuted    = Color3.fromRGB(60, 60, 68),
@@ -76,9 +93,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(80, 80, 90),
 		SliderTrack  = Color3.fromRGB(30, 30, 38),
 		BadgeBg      = Color3.fromRGB(26, 26, 32),
+		BadgeHover   = Color3.fromRGB(36, 36, 44),
 		BadgeText    = Color3.fromRGB(140, 140, 150),
 		SectionTitle = Color3.fromRGB(52, 52, 60),
 		EndBtn       = Color3.fromRGB(64, 64, 72),
+		EndBtnHover  = Color3.fromRGB(120, 120, 132),
+		TabHover     = Color3.fromRGB(22, 22, 28),
 	},
 	Purple = {
 		Background   = Color3.fromRGB(18, 15, 26),
@@ -92,6 +112,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(210, 200, 240),
 		PanelBg      = Color3.fromRGB(18, 15, 26),
 		RowBg        = Color3.fromRGB(26, 22, 38),
+		RowHover     = Color3.fromRGB(34, 28, 50),
 		RowBorder    = Color3.fromRGB(48, 40, 68),
 		TextPrimary  = Color3.fromRGB(200, 190, 225),
 		TextMuted    = Color3.fromRGB(80, 68, 108),
@@ -106,9 +127,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(130, 100, 190),
 		SliderTrack  = Color3.fromRGB(44, 36, 64),
 		BadgeBg      = Color3.fromRGB(36, 28, 56),
+		BadgeHover   = Color3.fromRGB(50, 40, 75),
 		BadgeText    = Color3.fromRGB(165, 145, 205),
 		SectionTitle = Color3.fromRGB(80, 65, 110),
 		EndBtn       = Color3.fromRGB(100, 85, 135),
+		EndBtnHover  = Color3.fromRGB(170, 150, 210),
+		TabHover     = Color3.fromRGB(34, 28, 50),
 	},
 	Ocean = {
 		Background   = Color3.fromRGB(12, 14, 20),
@@ -122,6 +146,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(200, 218, 245),
 		PanelBg      = Color3.fromRGB(12, 14, 20),
 		RowBg        = Color3.fromRGB(17, 22, 32),
+		RowHover     = Color3.fromRGB(24, 30, 44),
 		RowBorder    = Color3.fromRGB(26, 34, 54),
 		TextPrimary  = Color3.fromRGB(190, 210, 240),
 		TextMuted    = Color3.fromRGB(60, 80, 115),
@@ -136,9 +161,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(42, 74, 128),
 		SliderTrack  = Color3.fromRGB(22, 30, 50),
 		BadgeBg      = Color3.fromRGB(18, 26, 44),
+		BadgeHover   = Color3.fromRGB(28, 38, 60),
 		BadgeText    = Color3.fromRGB(126, 184, 245),
 		SectionTitle = Color3.fromRGB(50, 70, 105),
 		EndBtn       = Color3.fromRGB(70, 100, 150),
+		EndBtnHover  = Color3.fromRGB(126, 184, 245),
+		TabHover     = Color3.fromRGB(26, 32, 48),
 	},
 	Ember = {
 		Background   = Color3.fromRGB(15, 10, 6),
@@ -152,6 +180,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(232, 200, 168),
 		PanelBg      = Color3.fromRGB(15, 10, 6),
 		RowBg        = Color3.fromRGB(26, 17, 8),
+		RowHover     = Color3.fromRGB(36, 24, 12),
 		RowBorder    = Color3.fromRGB(46, 30, 14),
 		TextPrimary  = Color3.fromRGB(220, 185, 150),
 		TextMuted    = Color3.fromRGB(95, 65, 35),
@@ -166,9 +195,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(107, 58, 24),
 		SliderTrack  = Color3.fromRGB(36, 24, 12),
 		BadgeBg      = Color3.fromRGB(30, 20, 10),
+		BadgeHover   = Color3.fromRGB(46, 30, 14),
 		BadgeText    = Color3.fromRGB(212, 136, 74),
 		SectionTitle = Color3.fromRGB(90, 60, 28),
 		EndBtn       = Color3.fromRGB(120, 80, 40),
+		EndBtnHover  = Color3.fromRGB(212, 136, 74),
+		TabHover     = Color3.fromRGB(36, 26, 14),
 	},
 	Matrix = {
 		Background   = Color3.fromRGB(6, 10, 7),
@@ -182,6 +214,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(168, 232, 196),
 		PanelBg      = Color3.fromRGB(6, 10, 7),
 		RowBg        = Color3.fromRGB(12, 20, 14),
+		RowHover     = Color3.fromRGB(18, 30, 20),
 		RowBorder    = Color3.fromRGB(20, 40, 24),
 		TextPrimary  = Color3.fromRGB(150, 220, 175),
 		TextMuted    = Color3.fromRGB(45, 90, 55),
@@ -196,9 +229,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(30, 72, 48),
 		SliderTrack  = Color3.fromRGB(14, 28, 18),
 		BadgeBg      = Color3.fromRGB(12, 24, 15),
+		BadgeHover   = Color3.fromRGB(20, 38, 24),
 		BadgeText    = Color3.fromRGB(74, 201, 138),
 		SectionTitle = Color3.fromRGB(40, 85, 52),
 		EndBtn       = Color3.fromRGB(55, 110, 70),
+		EndBtnHover  = Color3.fromRGB(74, 201, 138),
+		TabHover     = Color3.fromRGB(18, 30, 20),
 	},
 	Rose = {
 		Background   = Color3.fromRGB(14, 6, 11),
@@ -212,6 +248,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(240, 184, 208),
 		PanelBg      = Color3.fromRGB(14, 6, 11),
 		RowBg        = Color3.fromRGB(24, 13, 20),
+		RowHover     = Color3.fromRGB(34, 18, 28),
 		RowBorder    = Color3.fromRGB(42, 20, 34),
 		TextPrimary  = Color3.fromRGB(230, 170, 198),
 		TextMuted    = Color3.fromRGB(90, 42, 68),
@@ -226,9 +263,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(90, 30, 60),
 		SliderTrack  = Color3.fromRGB(38, 16, 30),
 		BadgeBg      = Color3.fromRGB(30, 12, 22),
+		BadgeHover   = Color3.fromRGB(48, 20, 36),
 		BadgeText    = Color3.fromRGB(224, 88, 144),
 		SectionTitle = Color3.fromRGB(85, 36, 62),
 		EndBtn       = Color3.fromRGB(110, 50, 80),
+		EndBtnHover  = Color3.fromRGB(224, 88, 144),
+		TabHover     = Color3.fromRGB(34, 18, 28),
 	},
 	Light = {
 		Background   = Color3.fromRGB(248, 248, 250),
@@ -242,6 +282,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(28, 28, 36),
 		PanelBg      = Color3.fromRGB(248, 248, 250),
 		RowBg        = Color3.fromRGB(237, 237, 240),
+		RowHover     = Color3.fromRGB(224, 224, 230),
 		RowBorder    = Color3.fromRGB(216, 216, 222),
 		TextPrimary  = Color3.fromRGB(28, 28, 36),
 		TextMuted    = Color3.fromRGB(140, 140, 150),
@@ -256,9 +297,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(80, 80, 100),
 		SliderTrack  = Color3.fromRGB(200, 200, 208),
 		BadgeBg      = Color3.fromRGB(224, 224, 230),
+		BadgeHover   = Color3.fromRGB(208, 208, 218),
 		BadgeText    = Color3.fromRGB(60, 60, 72),
 		SectionTitle = Color3.fromRGB(160, 160, 172),
 		EndBtn       = Color3.fromRGB(120, 120, 134),
+		EndBtnHover  = Color3.fromRGB(40, 40, 52),
+		TabHover     = Color3.fromRGB(226, 226, 232),
 	},
 	Void = {
 		Background   = Color3.fromRGB(8, 8, 8),
@@ -272,6 +316,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(224, 224, 224),
 		PanelBg      = Color3.fromRGB(8, 8, 8),
 		RowBg        = Color3.fromRGB(17, 17, 17),
+		RowHover     = Color3.fromRGB(26, 26, 26),
 		RowBorder    = Color3.fromRGB(30, 30, 30),
 		TextPrimary  = Color3.fromRGB(210, 210, 210),
 		TextMuted    = Color3.fromRGB(75, 75, 75),
@@ -286,9 +331,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(140, 140, 140),
 		SliderTrack  = Color3.fromRGB(30, 30, 30),
 		BadgeBg      = Color3.fromRGB(22, 22, 22),
+		BadgeHover   = Color3.fromRGB(36, 36, 36),
 		BadgeText    = Color3.fromRGB(170, 170, 170),
 		SectionTitle = Color3.fromRGB(70, 70, 70),
 		EndBtn       = Color3.fromRGB(100, 100, 100),
+		EndBtnHover  = Color3.fromRGB(200, 200, 200),
+		TabHover     = Color3.fromRGB(22, 22, 22),
 	},
 	Cyber = {
 		Background   = Color3.fromRGB(5, 8, 16),
@@ -302,6 +350,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(160, 220, 240),
 		PanelBg      = Color3.fromRGB(5, 8, 16),
 		RowBg        = Color3.fromRGB(10, 16, 32),
+		RowHover     = Color3.fromRGB(16, 24, 46),
 		RowBorder    = Color3.fromRGB(16, 40, 64),
 		TextPrimary  = Color3.fromRGB(140, 210, 235),
 		TextMuted    = Color3.fromRGB(35, 72, 100),
@@ -316,9 +365,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(10, 64, 96),
 		SliderTrack  = Color3.fromRGB(10, 20, 40),
 		BadgeBg      = Color3.fromRGB(8, 18, 36),
+		BadgeHover   = Color3.fromRGB(14, 28, 54),
 		BadgeText    = Color3.fromRGB(0, 229, 255),
 		SectionTitle = Color3.fromRGB(30, 70, 100),
 		EndBtn       = Color3.fromRGB(40, 90, 125),
+		EndBtnHover  = Color3.fromRGB(0, 229, 255),
+		TabHover     = Color3.fromRGB(14, 22, 42),
 	},
 	NeonPink = {
 		Background   = Color3.fromRGB(9, 6, 12),
@@ -332,6 +384,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(240, 176, 248),
 		PanelBg      = Color3.fromRGB(9, 6, 12),
 		RowBg        = Color3.fromRGB(21, 14, 26),
+		RowHover     = Color3.fromRGB(30, 20, 38),
 		RowBorder    = Color3.fromRGB(36, 20, 48),
 		TextPrimary  = Color3.fromRGB(228, 165, 238),
 		TextMuted    = Color3.fromRGB(82, 44, 105),
@@ -346,9 +399,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(80, 32, 96),
 		SliderTrack  = Color3.fromRGB(36, 20, 48),
 		BadgeBg      = Color3.fromRGB(28, 16, 38),
+		BadgeHover   = Color3.fromRGB(44, 26, 58),
 		BadgeText    = Color3.fromRGB(255, 110, 247),
 		SectionTitle = Color3.fromRGB(75, 38, 96),
 		EndBtn       = Color3.fromRGB(100, 52, 124),
+		EndBtnHover  = Color3.fromRGB(255, 110, 247),
+		TabHover     = Color3.fromRGB(30, 20, 42),
 	},
 	Toxic = {
 		Background   = Color3.fromRGB(8, 12, 5),
@@ -362,6 +418,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(200, 240, 120),
 		PanelBg      = Color3.fromRGB(8, 12, 5),
 		RowBg        = Color3.fromRGB(16, 24, 10),
+		RowHover     = Color3.fromRGB(24, 36, 14),
 		RowBorder    = Color3.fromRGB(26, 40, 16),
 		TextPrimary  = Color3.fromRGB(188, 228, 108),
 		TextMuted    = Color3.fromRGB(58, 92, 26),
@@ -376,9 +433,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(56, 80, 24),
 		SliderTrack  = Color3.fromRGB(22, 36, 12),
 		BadgeBg      = Color3.fromRGB(16, 26, 8),
+		BadgeHover   = Color3.fromRGB(26, 40, 12),
 		BadgeText    = Color3.fromRGB(168, 232, 64),
 		SectionTitle = Color3.fromRGB(52, 82, 24),
 		EndBtn       = Color3.fromRGB(70, 108, 32),
+		EndBtnHover  = Color3.fromRGB(168, 232, 64),
+		TabHover     = Color3.fromRGB(22, 34, 14),
 	},
 	Blood = {
 		Background   = Color3.fromRGB(12, 5, 5),
@@ -392,6 +452,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(240, 180, 180),
 		PanelBg      = Color3.fromRGB(12, 5, 5),
 		RowBg        = Color3.fromRGB(24, 10, 10),
+		RowHover     = Color3.fromRGB(34, 14, 14),
 		RowBorder    = Color3.fromRGB(40, 16, 16),
 		TextPrimary  = Color3.fromRGB(228, 165, 165),
 		TextMuted    = Color3.fromRGB(92, 38, 38),
@@ -406,9 +467,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(96, 16, 16),
 		SliderTrack  = Color3.fromRGB(38, 10, 10),
 		BadgeBg      = Color3.fromRGB(30, 8, 8),
+		BadgeHover   = Color3.fromRGB(50, 14, 14),
 		BadgeText    = Color3.fromRGB(255, 68, 68),
 		SectionTitle = Color3.fromRGB(88, 32, 32),
 		EndBtn       = Color3.fromRGB(115, 44, 44),
+		EndBtnHover  = Color3.fromRGB(255, 68, 68),
+		TabHover     = Color3.fromRGB(32, 14, 14),
 	},
 	Gold = {
 		Background   = Color3.fromRGB(12, 9, 4),
@@ -422,6 +486,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(240, 216, 168),
 		PanelBg      = Color3.fromRGB(12, 9, 4),
 		RowBg        = Color3.fromRGB(26, 20, 8),
+		RowHover     = Color3.fromRGB(36, 28, 12),
 		RowBorder    = Color3.fromRGB(46, 36, 16),
 		TextPrimary  = Color3.fromRGB(228, 200, 148),
 		TextMuted    = Color3.fromRGB(90, 70, 26),
@@ -436,9 +501,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(96, 72, 16),
 		SliderTrack  = Color3.fromRGB(36, 28, 8),
 		BadgeBg      = Color3.fromRGB(28, 20, 6),
+		BadgeHover   = Color3.fromRGB(44, 32, 10),
 		BadgeText    = Color3.fromRGB(240, 192, 64),
 		SectionTitle = Color3.fromRGB(88, 66, 18),
 		EndBtn       = Color3.fromRGB(118, 90, 26),
+		EndBtnHover  = Color3.fromRGB(240, 192, 64),
+		TabHover     = Color3.fromRGB(34, 26, 12),
 	},
 	Teal = {
 		Background   = Color3.fromRGB(4, 10, 10),
@@ -452,6 +520,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(144, 232, 224),
 		PanelBg      = Color3.fromRGB(4, 10, 10),
 		RowBg        = Color3.fromRGB(10, 20, 20),
+		RowHover     = Color3.fromRGB(16, 30, 30),
 		RowBorder    = Color3.fromRGB(16, 38, 36),
 		TextPrimary  = Color3.fromRGB(130, 218, 210),
 		TextMuted    = Color3.fromRGB(32, 82, 80),
@@ -466,9 +535,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(26, 72, 72),
 		SliderTrack  = Color3.fromRGB(12, 30, 30),
 		BadgeBg      = Color3.fromRGB(8, 22, 22),
+		BadgeHover   = Color3.fromRGB(14, 36, 34),
 		BadgeText    = Color3.fromRGB(48, 216, 200),
 		SectionTitle = Color3.fromRGB(24, 68, 66),
 		EndBtn       = Color3.fromRGB(32, 90, 88),
+		EndBtnHover  = Color3.fromRGB(48, 216, 200),
+		TabHover     = Color3.fromRGB(14, 28, 28),
 	},
 	Hazard = {
 		Background   = Color3.fromRGB(9, 11, 8),
@@ -482,6 +554,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(224, 240, 148),
 		PanelBg      = Color3.fromRGB(9, 11, 8),
 		RowBg        = Color3.fromRGB(20, 24, 16),
+		RowHover     = Color3.fromRGB(28, 34, 20),
 		RowBorder    = Color3.fromRGB(32, 40, 26),
 		TextPrimary  = Color3.fromRGB(210, 228, 130),
 		TextMuted    = Color3.fromRGB(66, 84, 24),
@@ -496,9 +569,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(64, 80, 20),
 		SliderTrack  = Color3.fromRGB(24, 32, 12),
 		BadgeBg      = Color3.fromRGB(18, 24, 10),
+		BadgeHover   = Color3.fromRGB(28, 36, 16),
 		BadgeText    = Color3.fromRGB(232, 240, 96),
 		SectionTitle = Color3.fromRGB(58, 76, 22),
 		EndBtn       = Color3.fromRGB(78, 100, 30),
+		EndBtnHover  = Color3.fromRGB(232, 240, 96),
+		TabHover     = Color3.fromRGB(26, 32, 18),
 	},
 	Sakura = {
 		Background   = Color3.fromRGB(12, 6, 9),
@@ -512,6 +588,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(248, 192, 224),
 		PanelBg      = Color3.fromRGB(12, 6, 9),
 		RowBg        = Color3.fromRGB(26, 14, 20),
+		RowHover     = Color3.fromRGB(36, 20, 28),
 		RowBorder    = Color3.fromRGB(44, 24, 34),
 		TextPrimary  = Color3.fromRGB(236, 178, 212),
 		TextMuted    = Color3.fromRGB(88, 44, 66),
@@ -526,9 +603,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(88, 48, 72),
 		SliderTrack  = Color3.fromRGB(36, 18, 28),
 		BadgeBg      = Color3.fromRGB(28, 12, 20),
+		BadgeHover   = Color3.fromRGB(44, 20, 32),
 		BadgeText    = Color3.fromRGB(240, 128, 192),
 		SectionTitle = Color3.fromRGB(82, 42, 64),
 		EndBtn       = Color3.fromRGB(108, 56, 84),
+		EndBtnHover  = Color3.fromRGB(240, 128, 192),
+		TabHover     = Color3.fromRGB(34, 18, 28),
 	},
 	Ultraviolet = {
 		Background   = Color3.fromRGB(5, 5, 12),
@@ -542,6 +622,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(200, 180, 255),
 		PanelBg      = Color3.fromRGB(5, 5, 12),
 		RowBg        = Color3.fromRGB(13, 13, 28),
+		RowHover     = Color3.fromRGB(20, 20, 42),
 		RowBorder    = Color3.fromRGB(24, 24, 52),
 		TextPrimary  = Color3.fromRGB(185, 165, 245),
 		TextMuted    = Color3.fromRGB(64, 52, 125),
@@ -556,9 +637,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(48, 40, 112),
 		SliderTrack  = Color3.fromRGB(20, 18, 48),
 		BadgeBg      = Color3.fromRGB(14, 12, 36),
+		BadgeHover   = Color3.fromRGB(24, 20, 56),
 		BadgeText    = Color3.fromRGB(128, 96, 255),
 		SectionTitle = Color3.fromRGB(56, 46, 118),
 		EndBtn       = Color3.fromRGB(75, 62, 155),
+		EndBtnHover  = Color3.fromRGB(128, 96, 255),
+		TabHover     = Color3.fromRGB(20, 18, 40),
 	},
 	Mint = {
 		Background   = Color3.fromRGB(7, 12, 10),
@@ -572,6 +656,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(160, 248, 200),
 		PanelBg      = Color3.fromRGB(7, 12, 10),
 		RowBg        = Color3.fromRGB(14, 24, 19),
+		RowHover     = Color3.fromRGB(20, 34, 26),
 		RowBorder    = Color3.fromRGB(22, 40, 32),
 		TextPrimary  = Color3.fromRGB(145, 235, 186),
 		TextMuted    = Color3.fromRGB(38, 90, 64),
@@ -586,9 +671,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(40, 88, 64),
 		SliderTrack  = Color3.fromRGB(16, 38, 28),
 		BadgeBg      = Color3.fromRGB(12, 24, 18),
+		BadgeHover   = Color3.fromRGB(20, 38, 28),
 		BadgeText    = Color3.fromRGB(96, 248, 176),
 		SectionTitle = Color3.fromRGB(36, 80, 58),
 		EndBtn       = Color3.fromRGB(48, 106, 76),
+		EndBtnHover  = Color3.fromRGB(96, 248, 176),
+		TabHover     = Color3.fromRGB(18, 32, 24),
 	},
 	Solar = {
 		Background   = Color3.fromRGB(12, 10, 5),
@@ -602,6 +690,7 @@ local Themes = {
 		BrandText    = Color3.fromRGB(255, 215, 165),
 		PanelBg      = Color3.fromRGB(12, 10, 5),
 		RowBg        = Color3.fromRGB(28, 22, 8),
+		RowHover     = Color3.fromRGB(38, 30, 12),
 		RowBorder    = Color3.fromRGB(48, 38, 16),
 		TextPrimary  = Color3.fromRGB(242, 198, 145),
 		TextMuted    = Color3.fromRGB(96, 68, 24),
@@ -616,9 +705,12 @@ local Themes = {
 		SliderFill   = Color3.fromRGB(96, 40, 0),
 		SliderTrack  = Color3.fromRGB(38, 28, 8),
 		BadgeBg      = Color3.fromRGB(28, 20, 6),
+		BadgeHover   = Color3.fromRGB(44, 32, 10),
 		BadgeText    = Color3.fromRGB(255, 140, 56),
 		SectionTitle = Color3.fromRGB(90, 62, 18),
 		EndBtn       = Color3.fromRGB(120, 84, 28),
+		EndBtnHover  = Color3.fromRGB(255, 140, 56),
+		TabHover     = Color3.fromRGB(36, 28, 12),
 	},
 }
 VeroLib.Themes = Themes
@@ -661,6 +753,36 @@ local function listLayout(parent, dir, pad)
 	}, parent)
 end
 
+-- Fade a frame in by tweening BackgroundTransparency from 1→0
+-- and all TextLabel descendants simultaneously
+local function fadeIn(frame, duration)
+	duration = duration or 0.14
+	local info = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	frame.BackgroundTransparency = 1
+	tween(frame, info, { BackgroundTransparency = 0 })
+	for _, d in ipairs(frame:GetDescendants()) do
+		if d:IsA("TextLabel") or d:IsA("TextButton") or d:IsA("ImageLabel") then
+			if d:IsA("ImageLabel") then
+				d.ImageTransparency = 1
+				tween(d, info, { ImageTransparency = 0 })
+			elseif d:IsA("TextLabel") or d:IsA("TextButton") then
+				d.TextTransparency = 1
+				tween(d, info, { TextTransparency = 0 })
+			end
+		end
+	end
+end
+
+-- Hover helper — wires MouseEnter/MouseLeave tweens onto a frame
+local function addHover(frame, normalColor, hoverColor)
+	frame.MouseEnter:Connect(function()
+		tween(frame, TW_FAST, { BackgroundColor3 = hoverColor })
+	end)
+	frame.MouseLeave:Connect(function()
+		tween(frame, TW_FAST, { BackgroundColor3 = normalColor })
+	end)
+end
+
 -- ─────────────────────────────────────────
 -- Tab metatable
 -- ─────────────────────────────────────────
@@ -683,6 +805,8 @@ function Tab:_row(height)
 	}, self.ContentFrame)
 	corner(row)
 	stroke(row, T.RowBorder)
+	-- Hover state on every row
+	addHover(row, T.RowBg, T.RowHover)
 	table.insert(self._rows, { frame = row, type = "row" })
 	return row
 end
@@ -754,14 +878,15 @@ function Tab:AddToggle(name, desc, default, callback)
 	}, pill)
 	corner(knob, 10)
 
-	local tw = TweenInfo.new(0.15, Enum.EasingStyle.Quad)
 	local function refresh()
 		local t = self._window.Theme
-		TweenService:Create(pill, tw, { BackgroundColor3 = value and t.PillOn or t.PillOff }):Play()
-		TweenService:Create(knob, tw, {
+		-- Both pill color and knob slide tween together
+		tween(pill, TW_FAST, { BackgroundColor3 = value and t.PillOn or t.PillOff })
+		tween(knob, TW_FAST, {
 			BackgroundColor3 = value and t.KnobOn or t.KnobOff,
-			Position = value and UDim2.new(1, -17, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
-		}):Play()
+			Position         = value and UDim2.new(1, -17, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
+		})
+		pillStroke.Color = value and t.KnobOn or t.RowBorder
 	end
 
 	make("TextButton", {
@@ -789,9 +914,10 @@ end
 
 -- AddSlider
 function Tab:AddSlider(name, min, max, default, callback)
-	local T     = self._window.Theme
-	local value = math.clamp(default or min, min, max)
-	local row   = self:_row(54)
+	local T       = self._window.Theme
+	local default = math.clamp(default or min, min, max)
+	local value   = default
+	local row     = self:_row(54)
 
 	make("TextLabel", {
 		Size = UDim2.new(1, -60, 0, 16), Position = UDim2.fromOffset(13, 10),
@@ -800,6 +926,7 @@ function Tab:AddSlider(name, min, max, default, callback)
 		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
 	}, row)
 
+	-- Value badge
 	local valBadge = make("TextLabel", {
 		Size = UDim2.fromOffset(44, 18), AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -13, 0, 8),
@@ -810,8 +937,21 @@ function Tab:AddSlider(name, min, max, default, callback)
 	corner(valBadge, 4)
 	stroke(valBadge, T.RowBorder)
 
+	-- Reset button — sits left of the value badge
+	local resetBtn = make("ImageButton", {
+		Size = UDim2.fromOffset(18, 18), AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -62, 0, 9),
+		BackgroundColor3 = T.BadgeBg, BorderSizePixel = 0,
+		Image = "rbxassetid://99144149703689",
+		ImageColor3 = Color3.fromRGB(163, 162, 165), ZIndex = 6,
+	}, row)
+	corner(resetBtn, 4)
+	stroke(resetBtn, T.RowBorder)
+	addHover(resetBtn, T.BadgeBg, T.BadgeHover)
+
 	local track = make("Frame", {
-		Size = UDim2.new(1, -26, 0, 3), Position = UDim2.new(0, 13, 0, 40),
+		-- Shortened right side to not run under reset+badge
+		Size = UDim2.new(1, -90, 0, 3), Position = UDim2.new(0, 13, 0, 40),
 		BackgroundColor3 = T.SliderTrack, BorderSizePixel = 0, ZIndex = 5,
 	}, row)
 	corner(track, 2)
@@ -833,15 +973,24 @@ function Tab:AddSlider(name, min, max, default, callback)
 	local function setSlider(v)
 		value          = math.clamp(math.round(v), min, max)
 		local p        = (value - min) / (max - min)
-		fill.Size      = UDim2.new(p, 0, 1, 0)
-		thumb.Position = UDim2.new(p, 0, 0.5, 0)
+		tween(fill,  TW_FAST, { Size     = UDim2.new(p, 0, 1, 0) })
+		tween(thumb, TW_FAST, { Position = UDim2.new(p, 0, 0.5, 0) })
 		valBadge.Text  = tostring(value)
 		if callback then callback(value) end
 	end
 
+	-- Reset: spin the icon, snap back to default
+	resetBtn.MouseButton1Click:Connect(function()
+		tween(resetBtn, TW_FAST, { Rotation = 360 })
+		task.delay(TW_FAST.Time, function()
+			resetBtn.Rotation = 0
+		end)
+		setSlider(default)
+	end)
+
 	local dragging = false
 	local hitbox = make("TextButton", {
-		Size = UDim2.new(1, 0, 0, 20), Position = UDim2.new(0, 13, 0, 32),
+		Size = UDim2.new(1, -90, 0, 20), Position = UDim2.new(0, 13, 0, 32),
 		BackgroundTransparency = 1, Text = "", ZIndex = 8,
 	}, row)
 	hitbox.MouseButton1Down:Connect(function() dragging = true end)
@@ -856,15 +1005,17 @@ function Tab:AddSlider(name, min, max, default, callback)
 	end)
 
 	local entry = self._rows[#self._rows]
-	entry.type     = "slider"
-	entry.valBadge = valBadge
-	entry.track    = track
-	entry.fill     = fill
-	entry.thumb    = thumb
+	entry.type      = "slider"
+	entry.valBadge  = valBadge
+	entry.resetBtn  = resetBtn
+	entry.track     = track
+	entry.fill      = fill
+	entry.thumb     = thumb
 
 	local obj = {}
 	function obj:SetValue(v) setSlider(v) end
 	function obj:GetValue() return value end
+	function obj:Reset() setSlider(default) end
 	return obj
 end
 
@@ -895,6 +1046,15 @@ function Tab:AddButton(name, desc, label, callback)
 	}, row)
 	corner(btn, 6)
 	stroke(btn, T.RowBorder)
+	-- Badge hover
+	addHover(btn, T.BadgeBg, T.BadgeHover)
+	-- Press feedback
+	btn.MouseButton1Down:Connect(function()
+		tween(btn, TW_FAST, { Size = UDim2.fromOffset(46, 22) })
+	end)
+	btn.MouseButton1Up:Connect(function()
+		tween(btn, TW_SPRING, { Size = UDim2.fromOffset(48, 24) })
+	end)
 	btn.MouseButton1Click:Connect(function()
 		if callback then callback() end
 	end)
@@ -917,6 +1077,7 @@ function Tab:AddDropdown(name, options, default, callback)
 	}, self.ContentFrame)
 	corner(wrapper)
 	stroke(wrapper, T.RowBorder)
+	addHover(wrapper, T.RowBg, T.RowHover)
 	table.insert(self._rows, { frame = wrapper, type = "dropdown" })
 
 	local header = make("Frame", {
@@ -946,6 +1107,16 @@ function Tab:AddDropdown(name, options, default, callback)
 		Font = Enum.Font.GothamMedium, TextSize = 11, ZIndex = 7,
 	}, valBadge)
 
+	-- Chevron indicator that rotates on open
+	local chevronLabel = make("TextLabel", {
+		Size = UDim2.fromOffset(16, 22),
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -13, 0.5, 0),
+		BackgroundTransparency = 1,
+		Text = "›", TextColor3 = T.TextMuted,
+		Font = Enum.Font.GothamMedium, TextSize = 14, ZIndex = 6,
+	}, header)
+
 	local divider = make("Frame", {
 		Size = UDim2.new(1, 0, 0, 1), Position = UDim2.fromOffset(0, 44),
 		BackgroundColor3 = T.RowBorder, BorderSizePixel = 0, ZIndex = 5,
@@ -973,15 +1144,20 @@ function Tab:AddDropdown(name, options, default, callback)
 			ZIndex = 6, LayoutOrder = i,
 		}, optList)
 		padding(optBtn, 13)
+		addHover(optBtn,
+			isSelected and T.BadgeBg or T.RowBg,
+			T.RowHover)
 		optBtns[opt] = optBtn
 
 		optBtn.MouseButton1Click:Connect(function()
 			value         = opt
 			valLabel.Text = opt
 			for o, b in pairs(optBtns) do
-				b.BackgroundColor3 = o == opt and T.BadgeBg or T.RowBg
-				b.TextColor3       = o == opt and T.TextPrimary or T.TextMuted
-				b.Font             = o == opt and Enum.Font.GothamMedium or Enum.Font.Gotham
+				tween(b, TW_FAST, {
+					BackgroundColor3 = o == opt and T.BadgeBg or T.RowBg,
+					TextColor3       = o == opt and T.TextPrimary or T.TextMuted,
+				})
+				b.Font = o == opt and Enum.Font.GothamMedium or Enum.Font.Gotham
 			end
 			if callback then callback(value) end
 		end)
@@ -991,26 +1167,43 @@ function Tab:AddDropdown(name, options, default, callback)
 		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
 		Text = "", ZIndex = 8,
 	}, header).MouseButton1Click:Connect(function()
-		open            = not open
-		optList.Visible = open
-		divider.Visible = open
+		open = not open
+		-- Fade option list in, or hide instantly on close
+		if open then
+			optList.Visible = true
+			divider.Visible = true
+			for _, child in ipairs(optList:GetChildren()) do
+				if child:IsA("TextButton") then
+					child.BackgroundTransparency = 1
+					tween(child, TW_MED, { BackgroundTransparency = 0 })
+				end
+			end
+			tween(chevronLabel, TW_FAST, { Rotation = 90 })
+		else
+			optList.Visible = false
+			divider.Visible = false
+			tween(chevronLabel, TW_FAST, { Rotation = 0 })
+		end
 	end)
 
 	local entry = self._rows[#self._rows]
-	entry.valBadge = valBadge
-	entry.valLabel = valLabel
-	entry.divider  = divider
-	entry.optBtns  = optBtns
-	entry.getValue = function() return value end
+	entry.valBadge    = valBadge
+	entry.valLabel    = valLabel
+	entry.divider     = divider
+	entry.optBtns     = optBtns
+	entry.getValue    = function() return value end
+	entry.chevronLabel = chevronLabel
 
 	local obj = {}
 	function obj:SetValue(v)
 		value = v
 		valLabel.Text = v
 		for o, b in pairs(optBtns) do
-			b.BackgroundColor3 = o == v and T.BadgeBg or T.RowBg
-			b.TextColor3       = o == v and T.TextPrimary or T.TextMuted
-			b.Font             = o == v and Enum.Font.GothamMedium or Enum.Font.Gotham
+			tween(b, TW_FAST, {
+				BackgroundColor3 = o == v and T.BadgeBg or T.RowBg,
+				TextColor3       = o == v and T.TextPrimary or T.TextMuted,
+			})
+			b.Font = o == v and Enum.Font.GothamMedium or Enum.Font.Gotham
 		end
 	end
 	function obj:GetValue() return value end
@@ -1046,10 +1239,12 @@ function Tab:AddKeybind(name, desc, default, callback)
 	}, row)
 	corner(badge, 4)
 	stroke(badge, T.RowBorder)
+	addHover(badge, T.BadgeBg, T.BadgeHover)
 
 	badge.MouseButton1Click:Connect(function()
 		binding          = true
 		badge.Text       = "..."
+		tween(badge, TW_FAST, { BackgroundColor3 = T.BadgeHover })
 		badge.TextColor3 = T.TextPrimary
 	end)
 	UserInputService.InputBegan:Connect(function(input, gpe)
@@ -1058,6 +1253,7 @@ function Tab:AddKeybind(name, desc, default, callback)
 			key              = input.KeyCode
 			badge.Text       = key.Name
 			badge.TextColor3 = self._window.Theme.BadgeText
+			tween(badge, TW_FAST, { BackgroundColor3 = self._window.Theme.BadgeBg })
 			if callback then callback(key) end
 		end
 	end)
@@ -1093,10 +1289,17 @@ function Tab:AddTextInput(name, placeholder, callback)
 		ClearTextOnFocus = false, ZIndex = 5,
 	}, row)
 	corner(field, 6)
-	stroke(field, T.RowBorder)
+	local fieldStroke = stroke(field, T.RowBorder)
 	padding(field, 8, 8)
 
+	-- Highlight border on focus
+	field.Focused:Connect(function()
+		tween(field, TW_FAST, { BackgroundColor3 = T.RowHover })
+		fieldStroke.Color = T.TextMuted
+	end)
 	field.FocusLost:Connect(function(enterPressed)
+		tween(field, TW_FAST, { BackgroundColor3 = T.PanelBg })
+		fieldStroke.Color = T.RowBorder
 		if callback then callback(field.Text, enterPressed) end
 	end)
 
@@ -1151,6 +1354,14 @@ function Tab:AddColorPicker(name, desc, swatches, default, callback)
 			color == value and 1.5 or 0.5)
 		swatchData[s] = { color = color, stroke = st }
 
+		-- Swatch scale on hover
+		s.MouseEnter:Connect(function()
+			tween(s, TW_FAST, { Size = UDim2.fromOffset(20, 20) })
+		end)
+		s.MouseLeave:Connect(function()
+			tween(s, TW_FAST, { Size = UDim2.fromOffset(18, 18) })
+		end)
+
 		s.MouseButton1Click:Connect(function()
 			value = color
 			local t = self._window.Theme
@@ -1176,6 +1387,9 @@ function Tab:AddColorPicker(name, desc, swatches, default, callback)
 end
 
 -- AddSearch
+-- Filters all row-level frames in this tab's ContentFrame by checking
+-- whether any TextLabel descendant contains the query string (case-insensitive).
+-- Rows with no match are hidden; all rows shown when query is empty.
 function Tab:AddSearch(placeholder, onChange)
 	local T   = self._window.Theme
 	local row = make("Frame", {
@@ -1184,14 +1398,15 @@ function Tab:AddSearch(placeholder, onChange)
 		ZIndex = 4, LayoutOrder = self:_order(),
 	}, self.ContentFrame)
 	corner(row)
-	stroke(row, T.RowBorder)
+	local rowStroke = stroke(row, T.RowBorder)
 	padding(row, 10, 10)
 	table.insert(self._rows, { frame = row, type = "search" })
 
-	make("TextLabel", {
-		Size = UDim2.fromOffset(16, 34), BackgroundTransparency = 1,
-		Text = "⌕", TextColor3 = T.TextMuted,
-		Font = Enum.Font.GothamMedium, TextSize = 16, ZIndex = 5,
+	make("ImageButton", {
+		Position = UDim2.fromOffset(0,9),
+		Size = UDim2.fromOffset(16, 16), BackgroundTransparency = 1,
+		Image = "rbxassetid://131786185512555", ImageColor3 = Color3.fromRGB(123, 123, 125),
+		ZIndex = 5,
 	}, row)
 
 	local field = make("TextBox", {
@@ -1204,52 +1419,93 @@ function Tab:AddSearch(placeholder, onChange)
 		ClearTextOnFocus = false, ZIndex = 5,
 	}, row)
 
+	field.Focused:Connect(function()
+		tween(row, TW_FAST, { BackgroundColor3 = T.RowHover })
+		rowStroke.Color = T.TextMuted
+	end)
+	field.FocusLost:Connect(function()
+		tween(row, TW_FAST, { BackgroundColor3 = T.RowBg })
+		rowStroke.Color = T.RowBorder
+	end)
+
+	-- ── Filtering ──
+	-- Collects all text visible in a frame by scanning TextLabel descendants
+	local function getFrameText(frame)
+		local parts = {}
+		for _, desc in ipairs(frame:GetDescendants()) do
+			if desc:IsA("TextLabel") or desc:IsA("TextButton") then
+				if desc.Text and desc.Text ~= "" then
+					table.insert(parts, desc.Text:lower())
+				end
+			end
+		end
+		return table.concat(parts, " ")
+	end
+
+	local function applyFilter(query)
+		query = query:lower():gsub("^%s+", ""):gsub("%s+$", "")
+		local contentFrame = self.ContentFrame
+
+		for _, child in ipairs(contentFrame:GetChildren()) do
+			-- Never hide the search bar itself or layout instances
+			if child == row or child:IsA("UIListLayout") or child:IsA("UIPadding") then
+				continue
+			end
+
+			if query == "" then
+				-- Empty query — show everything
+				child.Visible = true
+			else
+				-- Check if this frame or any of its text contains the query
+				local text = getFrameText(child)
+				-- Also check the direct Name in case labels match
+				if child:IsA("TextLabel") then
+					text = text .. " " .. child.Text:lower()
+				end
+				child.Visible = text:find(query, 1, true) ~= nil
+			end
+		end
+
+		if onChange then onChange(query) end
+	end
+
+	field:GetPropertyChangedSignal("Text"):Connect(function()
+		applyFilter(field.Text)
+	end)
+
 	local entry = self._rows[#self._rows]
 	entry.field = field
 
-	field:GetPropertyChangedSignal("Text"):Connect(function()
-		if onChange then onChange(field.Text) end
-	end)
-
 	local obj = {}
 	function obj:GetValue() return field.Text end
-	function obj:Clear() field.Text = "" end
+	function obj:Clear()
+		field.Text = ""
+		applyFilter("")
+	end
 	return obj
 end
 
 -- ─────────────────────────────────────────
 -- AddGameBox
--- placeId    : number  — Roblox place ID
--- title      : string  — display name
--- buildFn    : function(panel) — called once when opened, panel is a Tab-like
---              object with all the same builders (AddToggle, AddSlider, etc.)
---              The panel frame is destroyed when the box is closed.
 -- ─────────────────────────────────────────
 function Tab:AddGameBox(placeId, title, buildFn)
 	local T        = self._window.Theme
 	local win      = self._window
 	local isOpen      = false
-	local activePanel   = nil  -- holds the live panel frame, nil when closed
-	local activeDivider = nil  -- holds the divider, destroyed alongside panel
-	-- Persistent state table — survives open/close cycles so toggles/sliders
-	-- remember their values. Keys are set by the caller via state:set(key, val).
-	-- buildFn receives this as its second argument.
+	local activePanel   = nil
+	local activeDivider = nil
 	local state = {}
 	state._data = {}
 	function state:get(key, default)
-		if self._data[key] == nil then
-			return default
-		end
+		if self._data[key] == nil then return default end
 		return self._data[key]
 	end
 	function state:set(key, value)
 		self._data[key] = value
 	end
 
-	-- Thumbnail height constant — change this one value to resize
 	local THUMB_H = 100
 
-	-- Outer card frame — grows to contain panel when open
 	local card = make("Frame", {
 		Size             = UDim2.new(1, 0, 0, THUMB_H + 28),
 		BackgroundColor3 = T.RowBg,
@@ -1263,7 +1519,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 	local cardStroke = stroke(card, T.RowBorder)
 	table.insert(self._rows, { frame = card, type = "gamebox", cardStroke = cardStroke })
 
-	-- Thumbnail area
 	local thumbFrame = make("Frame", {
 		Size             = UDim2.new(1, 0, 0, THUMB_H),
 		BackgroundColor3 = T.RowBorder,
@@ -1273,7 +1528,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 	}, card)
 	make("UICorner", { CornerRadius = UDim.new(0, 8) }, thumbFrame)
 
-	-- Thumbnail image (shown if fetch succeeds)
 	local thumbImage = make("ImageLabel", {
 		Size              = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
@@ -1283,7 +1537,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 		Visible           = false,
 	}, thumbFrame)
 
-	-- Fallback / loading label
 	local thumbLabel = make("TextLabel", {
 		Size                 = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
@@ -1294,7 +1547,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 		ZIndex               = 6,
 	}, thumbFrame)
 
-	-- Footer row: title + chevron
 	local footer = make("Frame", {
 		Size             = UDim2.new(1, 0, 0, 28),
 		Position         = UDim2.fromOffset(0, THUMB_H),
@@ -1314,44 +1566,57 @@ function Tab:AddGameBox(placeId, title, buildFn)
 		ZIndex               = 6,
 	}, footer)
 
-	local chevron = make("TextLabel", {
-		Size                 = UDim2.fromOffset(20, 28),
-		AnchorPoint          = Vector2.new(1, 0),
-		Position             = UDim2.new(1, -10, 0, 0),
+	-- Chevron as a rotatable frame rather than swapped text
+	local chevronFrame = make("Frame", {
+		Size             = UDim2.fromOffset(20, 20),
+		AnchorPoint      = Vector2.new(1, 0.5),
+		Position         = UDim2.new(1, -10, 0.5, 0),
+		BackgroundTransparency = 1,
+		ZIndex           = 6,
+	}, footer)
+	local chevronLabel = make("TextLabel", {
+		Size                 = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		Text                 = "›",
 		TextColor3           = T.TextMuted,
 		Font                 = Enum.Font.GothamMedium,
 		TextSize             = 16,
-		ZIndex               = 6,
-	}, footer)
+		ZIndex               = 7,
+	}, chevronFrame)
 
-	-- ── Thumbnail fetch (async, graceful fallback) ──
-	task.spawn(function()
-		local success, err = pcall(function()
-			thumbImage.Image = string.format(
-				"rbxthumb://type=GameThumbnail&id=%d&w=768&h=432",
-				placeId
-			)
-
-			thumbImage.Visible = true
-			thumbLabel.Visible = false
-		end)
-
-		if not success then
-			thumbLabel.Text = "preview failed"
-			thumbLabel.TextColor3 = T.TextMuted
+	-- Hover on the whole card header
+	card.MouseEnter:Connect(function()
+		tween(card, TW_FAST, { BackgroundColor3 = T.RowHover })
+	end)
+	card.MouseLeave:Connect(function()
+		if not isOpen then
+			tween(card, TW_FAST, { BackgroundColor3 = T.RowBg })
 		end
 	end)
 
-	-- ── Open / close panel logic ──
+	-- Thumbnail fetch
+	task.spawn(function()
+		local success, err = pcall(function()
+			thumbImage.Image = string.format(
+				"rbxthumb://type=GameThumbnail&id=%d&w=768&h=432", placeId)
+			-- Fade the thumbnail in once loaded
+			thumbImage.ImageTransparency = 1
+			thumbImage.Visible = true
+			thumbLabel.Visible = false
+			tween(thumbImage, TW_MED, { ImageTransparency = 0 })
+		end)
+		if not success then
+			thumbLabel.Text = "preview failed"
+		end
+	end)
+
 	local function closePanel()
 		if not isOpen then return end
 		isOpen = false
-		chevron.Text      = "›"
-		chevron.TextColor3 = T.TextMuted
-		cardStroke.Color  = T.RowBorder
-		-- Destroy the panel frame entirely — clean slate next open
+		tween(chevronLabel, TW_FAST, { Rotation = 0 })
+		tween(chevronLabel, TW_FAST, { TextColor3 = T.TextMuted })
+		tween(cardStroke,   TW_FAST, { Color = T.RowBorder })
+		tween(card,         TW_FAST, { BackgroundColor3 = T.RowBg })
 		if activePanel then
 			activePanel:Destroy()
 			activePanel = nil
@@ -1366,11 +1631,10 @@ function Tab:AddGameBox(placeId, title, buildFn)
 	local function openPanel()
 		if isOpen then return end
 		isOpen = true
-		chevron.Text       = "‹"
-		chevron.TextColor3 = T.TextPrimary
-		cardStroke.Color   = T.TextMuted
+		tween(chevronLabel, TW_FAST, { Rotation = 90 })
+		tween(chevronLabel, TW_FAST, { TextColor3 = T.TextPrimary })
+		tween(cardStroke,   TW_FAST, { Color = T.TextMuted })
 
-		-- Divider between footer and panel
 		activeDivider = make("Frame", {
 			Size             = UDim2.new(1, 0, 0, 1),
 			Position         = UDim2.fromOffset(0, THUMB_H + 28),
@@ -1379,11 +1643,11 @@ function Tab:AddGameBox(placeId, title, buildFn)
 			ZIndex           = 5,
 		}, card)
 
-		-- Panel container — standard padding + list layout
 		local panelFrame = make("Frame", {
 			Size              = UDim2.new(1, 0, 0, 0),
 			Position          = UDim2.fromOffset(0, THUMB_H + 29),
-			BackgroundTransparency = 1,
+			BackgroundColor3  = T.PanelBg,
+			BackgroundTransparency = 0,
 			BorderSizePixel   = 0,
 			AutomaticSize     = Enum.AutomaticSize.Y,
 			ZIndex            = 5,
@@ -1392,8 +1656,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 		listLayout(panelFrame)
 		activePanel = panelFrame
 
-		-- Build a lightweight Tab-like proxy so buildFn uses familiar API
-		-- It shares the same _window reference so themes + callbacks work
 		local proxy = setmetatable({
 			_window      = win,
 			_layoutOrder = 0,
@@ -1401,7 +1663,6 @@ function Tab:AddGameBox(placeId, title, buildFn)
 			ContentFrame = panelFrame,
 		}, Tab)
 
-		-- Close button inside the panel
 		local closeRow = make("Frame", {
 			Size             = UDim2.new(1, 0, 0, 28),
 			BackgroundTransparency = 1,
@@ -1424,17 +1685,14 @@ function Tab:AddGameBox(placeId, title, buildFn)
 		}, closeRow)
 		corner(closeBtn, 6)
 		stroke(closeBtn, T.RowBorder)
+		addHover(closeBtn, T.BadgeBg, T.BadgeHover)
 		closeBtn.MouseButton1Click:Connect(closePanel)
 
-		-- Let the caller populate the panel
-		-- state persists across open/close — use state:get(key, default) for
-		-- component defaults and state:set(key, val) inside callbacks
 		if buildFn then buildFn(proxy, state) end
 
 		win:SetStatus(title:lower() .. " — game panel open")
 	end
 
-	-- Click anywhere on the card header (thumb + footer) toggles open/close
 	local hitbox = make("TextButton", {
 		Size                 = UDim2.new(1, 0, 0, THUMB_H + 28),
 		BackgroundTransparency = 1,
@@ -1456,20 +1714,20 @@ function Tab:ApplyTheme(T)
 
 		if f and f:IsA("Frame") and t ~= "separator" and t ~= "section" and t ~= "gamebox" then
 			f.BackgroundColor3 = T.RowBg
+			-- Re-wire hover with new colors
+			f.MouseEnter:Connect(function() tween(f, TW_FAST, { BackgroundColor3 = T.RowHover }) end)
+			f.MouseLeave:Connect(function() tween(f, TW_FAST, { BackgroundColor3 = T.RowBg }) end)
 			local s = f:FindFirstChildOfClass("UIStroke")
 			if s then s.Color = T.RowBorder end
 		end
 
 		if t == "separator" then
 			f.BackgroundColor3 = T.RowBorder
-
 		elseif t == "section" then
 			f.TextColor3 = T.SectionTitle
-
 		elseif t == "gamebox" then
 			f.BackgroundColor3 = T.RowBg
 			if entry.cardStroke then entry.cardStroke.Color = T.RowBorder end
-
 		elseif t == "toggle" then
 			for _, child in ipairs(f:GetChildren()) do
 				if child:IsA("TextLabel") then
@@ -1483,7 +1741,6 @@ function Tab:ApplyTheme(T)
 			if entry.pillStroke then
 				entry.pillStroke.Color = on and T.KnobOn or T.RowBorder
 			end
-
 		elseif t == "slider" then
 			for _, child in ipairs(f:GetChildren()) do
 				if child:IsA("TextLabel") then
@@ -1496,9 +1753,14 @@ function Tab:ApplyTheme(T)
 			entry.track.BackgroundColor3    = T.SliderTrack
 			entry.fill.BackgroundColor3     = T.SliderFill
 			entry.thumb.BackgroundColor3    = T.KnobOn
+			if entry.resetBtn then
+				entry.resetBtn.BackgroundColor3 = T.BadgeBg
+				entry.resetBtn.TextColor3       = T.TextMuted
+				local rs = entry.resetBtn:FindFirstChildOfClass("UIStroke")
+				if rs then rs.Color = T.RowBorder end
+			end
 			local bs = entry.valBadge:FindFirstChildOfClass("UIStroke")
 			if bs then bs.Color = T.RowBorder end
-
 		elseif t == "button" then
 			for _, child in ipairs(f:GetChildren()) do
 				if child:IsA("TextLabel") then
@@ -1510,7 +1772,6 @@ function Tab:ApplyTheme(T)
 			entry.btn.TextColor3       = T.BadgeText
 			local bs = entry.btn:FindFirstChildOfClass("UIStroke")
 			if bs then bs.Color = T.RowBorder end
-
 		elseif t == "keybind" then
 			for _, child in ipairs(f:GetChildren()) do
 				if child:IsA("TextLabel") then
@@ -1522,7 +1783,6 @@ function Tab:ApplyTheme(T)
 			entry.badge.TextColor3       = T.BadgeText
 			local bs = entry.badge:FindFirstChildOfClass("UIStroke")
 			if bs then bs.Color = T.RowBorder end
-
 		elseif t == "dropdown" then
 			for _, child in ipairs(f:GetDescendants()) do
 				if child:IsA("TextLabel") then
@@ -1538,7 +1798,6 @@ function Tab:ApplyTheme(T)
 				b.BackgroundColor3 = o == cur and T.BadgeBg or T.RowBg
 				b.TextColor3       = o == cur and T.TextPrimary or T.TextMuted
 			end
-
 		elseif t == "textinput" or t == "search" then
 			for _, child in ipairs(f:GetChildren()) do
 				if child:IsA("TextLabel") then
@@ -1575,7 +1834,7 @@ function VeroLib.new(themeName)
 
 	self.Window = make("Frame", {
 		Name = "Window",
-		Size = UDim2.new(0, 440, 0, 44),
+		Size = UDim2.new(0, 435, 0, 44),
 		Position = UDim2.new(0.5, -230, 0, 24),
 		BackgroundColor3 = T.Background,
 		BorderSizePixel = 0, ClipsDescendants = true,
@@ -1653,7 +1912,7 @@ function VeroLib.new(themeName)
 	self._endFrame = endFrame
 
 	local function endBtn(text, order)
-		return make("TextButton", {
+		local b = make("TextButton", {
 			Size = UDim2.fromOffset(18, 18),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
@@ -1661,6 +1920,10 @@ function VeroLib.new(themeName)
 			Font = Enum.Font.GothamMedium, TextSize = 14,
 			ZIndex = 6, LayoutOrder = order,
 		}, endFrame)
+		-- End button hover
+		b.MouseEnter:Connect(function() tween(b, TW_FAST, { TextColor3 = T.EndBtnHover }) end)
+		b.MouseLeave:Connect(function() tween(b, TW_FAST, { TextColor3 = T.EndBtn }) end)
+		return b
 	end
 
 	self.SettingsBtn = endBtn("⚙", 1)
@@ -1782,11 +2045,11 @@ function VeroLib:_BuildSettingsTab()
 		Size = UDim2.fromOffset(0, 0), BackgroundTransparency = 1,
 		Text = "", Visible = false,
 	}, self.Bar)
-	tab.Button       = dummyBtn
-	tab.Label        = make("TextLabel", {
+	tab.Button    = dummyBtn
+	tab.Label     = make("TextLabel", {
 		Text = "", BackgroundTransparency = 1, Size = UDim2.fromOffset(0, 0),
 	}, dummyBtn)
-	tab.Underline    = make("Frame", {
+	tab.Underline = make("Frame", {
 		Size = UDim2.fromOffset(0, 0), BackgroundTransparency = 1, Visible = false,
 	}, dummyBtn)
 	tab.ContentFrame = contentFrame
@@ -1796,16 +2059,11 @@ function VeroLib:_BuildSettingsTab()
 
 	tab:AddSection("theme")
 	local themeKeys = {}
-	for key in pairs(Themes) do
-		table.insert(themeKeys, key)
-	end
+	for key in pairs(Themes) do table.insert(themeKeys, key) end
 	table.sort(themeKeys)
 	local currentThemeName = "DarkGrey"
 	for key in pairs(Themes) do
-		if self.Theme == Themes[key] then
-			currentThemeName = key
-			break
-		end
+		if self.Theme == Themes[key] then currentThemeName = key break end
 	end
 	tab:AddDropdown("theme", themeKeys, currentThemeName, function(selected)
 		self:SetTheme(selected)
@@ -1832,42 +2090,45 @@ function VeroLib:_BuildSettingsTab()
 end
 
 -- ─────────────────────────────────────────
--- SetTheme
+-- SetTheme — tweens top-level colors
 -- ─────────────────────────────────────────
 function VeroLib:SetTheme(themeName)
 	local T = Themes[themeName]
 	if not T then return end
 	self.Theme = T
 
-	self.Window.BackgroundColor3          = T.Background
-	self.Bar.BackgroundColor3             = T.Bar
-	self.PanelBody.BackgroundColor3       = T.PanelBg
-	self.PanelBody.ScrollBarImageColor3   = T.RowBorder
-	self.StatusBar.BackgroundColor3       = T.StatusBar
-	self.StatusLabel.TextColor3           = T.StatusText
-	self.StatusDot.BackgroundColor3       = T.StatusDot
-	self._brandLabel.TextColor3           = T.BrandText
-	self._outerDiamond.BackgroundColor3   = T.LogoColor
-	self._innerDiamond.BackgroundColor3   = T.Bar
+	-- Tween top-level surfaces for a smooth theme transition
+	tween(self.Window,    TW_MED, { BackgroundColor3 = T.Background })
+	tween(self.Bar,       TW_MED, { BackgroundColor3 = T.Bar })
+	tween(self.PanelBody, TW_MED, { BackgroundColor3 = T.PanelBg })
+	tween(self.StatusBar, TW_MED, { BackgroundColor3 = T.StatusBar })
+	tween(self.StatusLabel, TW_MED, { TextColor3 = T.StatusText })
+	tween(self.StatusDot,   TW_MED, { BackgroundColor3 = T.StatusDot })
+	tween(self._brandLabel, TW_MED, { TextColor3 = T.BrandText })
+	tween(self._outerDiamond, TW_MED, { BackgroundColor3 = T.LogoColor })
+	tween(self._innerDiamond, TW_MED, { BackgroundColor3 = T.Bar })
+	self.PanelBody.ScrollBarImageColor3 = T.RowBorder
 
 	for _, b in ipairs(self._endFrame:GetChildren()) do
-		if b:IsA("TextButton") then b.TextColor3 = T.EndBtn end
+		if b:IsA("TextButton") then
+			tween(b, TW_MED, { TextColor3 = T.EndBtn })
+		end
 	end
 
 	local winStroke = self.Window:FindFirstChildOfClass("UIStroke")
-	if winStroke then winStroke.Color = T.BarBorder end
+	if winStroke then tween(winStroke, TW_MED, { Color = T.BarBorder }) end
 	local barStroke = self.Bar:FindFirstChildOfClass("UIStroke")
-	if barStroke then barStroke.Color = T.BarBorder end
+	if barStroke then tween(barStroke, TW_MED, { Color = T.BarBorder }) end
 	local sbStroke = self.StatusBar:FindFirstChildOfClass("UIStroke")
-	if sbStroke then sbStroke.Color = T.BarBorder end
+	if sbStroke then tween(sbStroke, TW_MED, { Color = T.BarBorder }) end
 
 	for _, t in ipairs(self.Tabs) do
 		local active = (t == self.ActiveTab)
-		t.Button.BackgroundColor3    = active and T.TabActive or T.TabInactive
-		t.Label.TextColor3           = active and T.TabText   or T.TabTextMuted
-		t.Underline.BackgroundColor3 = T.TabUnderline
+		tween(t.Button,    TW_MED, { BackgroundColor3 = active and T.TabActive or T.TabInactive })
+		tween(t.Label,     TW_MED, { TextColor3 = active and T.TabText or T.TabTextMuted })
+		tween(t.Underline, TW_MED, { BackgroundColor3 = T.TabUnderline })
 		local ts = t.Button:FindFirstChildOfClass("UIStroke")
-		if ts then ts.Color = T.BarBorder end
+		if ts then tween(ts, TW_MED, { Color = T.BarBorder }) end
 		if t.ApplyTheme then t:ApplyTheme(T) end
 	end
 end
@@ -1879,22 +2140,22 @@ function VeroLib:Expand(panelHeight)
 	local w       = self.Window.Size.X.Offset
 	local clamped = math.min(panelHeight, self.MaxPanelHeight)
 	local totalH  = 44 + clamped + 26
-	self.PanelBody.Visible  = true
-	self.StatusBar.Visible  = true
-	self.PanelBody.Size     = UDim2.new(1, 0, 0, clamped)
-	self.StatusBar.Position = UDim2.fromOffset(0, 44 + clamped)
-	TweenService:Create(self.Window, TweenInfo.new(0.18, Enum.EasingStyle.Quad), {
-		Size = UDim2.new(0, w, 0, totalH)
-	}):Play()
+
+	self.PanelBody.Size                   = UDim2.new(1, 0, 0, clamped)
+	self.PanelBody.BackgroundTransparency = 0
+	self.PanelBody.Visible                = true
+	self.StatusBar.BackgroundTransparency = 0
+	self.StatusBar.Visible                = true
+	self.StatusBar.Position               = UDim2.fromOffset(0, 44 + clamped)
+
+	tween(self.Window, TW_MED, { Size = UDim2.new(0, w, 0, totalH) })
 	self.Expanded = true
 end
 
 function VeroLib:Collapse()
 	local w = self.Window.Size.X.Offset
-	TweenService:Create(self.Window, TweenInfo.new(0.18, Enum.EasingStyle.Quad), {
-		Size = UDim2.new(0, w, 0, 44)
-	}):Play()
-	task.delay(0.18, function()
+	tween(self.Window, TW_MED, { Size = UDim2.new(0, w, 0, 44) })
+	task.delay(TW_MED.Time, function()
 		self.PanelBody.Visible = false
 		self.StatusBar.Visible = false
 	end)
@@ -1919,14 +2180,27 @@ function VeroLib:AddTab(name)
 	stroke(tabBtn, T.BarBorder, 1)
 	padding(tabBtn, 16, 16)
 
+	-- Tab hover
+	tabBtn.MouseEnter:Connect(function()
+		if self.ActiveTab ~= tab then
+			tween(tabBtn, TW_FAST, { BackgroundColor3 = T.TabHover })
+		end
+	end)
+	tabBtn.MouseLeave:Connect(function()
+		if self.ActiveTab ~= tab then
+			tween(tabBtn, TW_FAST, { BackgroundColor3 = T.TabInactive })
+		end
+	end)
+
 	local tabLabel = make("TextLabel", {
 		Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1,
 		Text = name:lower(), TextColor3 = T.TabTextMuted,
 		Font = Enum.Font.Gotham, TextSize = 12, ZIndex = 6,
 	}, tabBtn)
 
+	-- Underline starts at 0 width and slides in when active
 	local underline = make("Frame", {
-		Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2),
+		Size = UDim2.new(0, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2),
 		BackgroundColor3 = T.TabUnderline, BorderSizePixel = 0,
 		Visible = false, ZIndex = 7,
 	}, tabBtn)
@@ -1961,19 +2235,32 @@ end
 -- ─────────────────────────────────────────
 function VeroLib:_SetActiveTab(tab)
 	local T = self.Theme
+
+	-- Deactivate all tabs instantly — no delayed callbacks that could
+	-- stomp over the newly active tab's state
 	for _, t in ipairs(self.Tabs) do
 		t.Button.BackgroundColor3 = T.TabInactive
 		t.Label.TextColor3        = T.TabTextMuted
 		t.Label.Font              = Enum.Font.Gotham
 		t.Underline.Visible       = false
+		t.Underline.Size          = UDim2.new(0, 0, 0, 2)
 		t.ContentFrame.Visible    = false
 	end
-	tab.Button.BackgroundColor3 = T.TabActive
-	tab.Label.TextColor3        = T.TabText
-	tab.Label.Font              = Enum.Font.GothamMedium
-	tab.Underline.Visible       = true
-	tab.ContentFrame.Visible    = true
-	self.ActiveTab              = tab
+
+	-- Activate selected tab
+	tween(tab.Button, TW_FAST, { BackgroundColor3 = T.TabActive })
+	tween(tab.Label,  TW_FAST, { TextColor3 = T.TabText })
+	tab.Label.Font = Enum.Font.GothamMedium
+
+	-- Slide underline in
+	tab.Underline.Visible = true
+	tab.Underline.Size    = UDim2.new(0, 0, 0, 2)
+	tween(tab.Underline, TW_MED, { Size = UDim2.new(1, 0, 0, 2) })
+
+	-- Show content immediately — panel transparency handles the visual fade
+	tab.ContentFrame.Visible = true
+
+	self.ActiveTab = tab
 
 	task.defer(function()
 		local panelH = tab.ContentFrame.AbsoluteSize.Y + 24
@@ -1982,12 +2269,20 @@ function VeroLib:_SetActiveTab(tab)
 end
 
 -- ─────────────────────────────────────────
--- SetStatus / BindToggleKey
+-- SetStatus — fades text between values
 -- ─────────────────────────────────────────
 function VeroLib:SetStatus(text)
-	self.StatusLabel.Text = text
+	-- Fade out, swap text, fade in
+	tween(self.StatusLabel, TW_FAST, { TextTransparency = 1 })
+	task.delay(0.1, function()
+		self.StatusLabel.Text = text
+		tween(self.StatusLabel, TW_FAST, { TextTransparency = 0 })
+	end)
 end
 
+-- ─────────────────────────────────────────
+-- BindToggleKey
+-- ─────────────────────────────────────────
 function VeroLib:BindToggleKey(keyCode)
 	keyCode = keyCode or Enum.KeyCode.RightShift
 	UserInputService.InputBegan:Connect(function(input, gpe)
