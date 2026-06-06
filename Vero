@@ -29,26 +29,18 @@ Sell Lemons[
 ]]--
 
 
---//PLAYER
+--//PLAYER\\--
 Client:AddSection("protection")
 Client:AddSearch("Search..")
 Client:AddButton("Dex Explorer", "Made by Vezise", "Load", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/2026/main/Vez/VexExplorer/VEXExplorer.lua"))()
 end)
 
---//GAMES
+--//GAMES\\--
 games:AddSearch("Search..")
-games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
-	panel:AddSection("Lemon Trees")
 
-	panel:AddToggle("Click Aura", "Just walk up and itll auto click",
-		state:get("autoFarm", false),   -- reads saved value, defaults to false
-		function(v)
-			state:set("autoFarm", v)    -- saves it for next open
-			-- your logic here
-		end
-	)
-end)
+-- Sell Lemons
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/refs/heads/main/Sell_Lemons_GameBox"))(games)
 
 --//INIT
 window:SetStatus("ready")
