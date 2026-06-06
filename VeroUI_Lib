@@ -1812,7 +1812,7 @@ function VeroLib.new(themeName)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	}, PlayerGui)
 
-	self._winScaleX = 0.29
+	self._winScaleX = 0.295
 
 	self.Window = make("Frame", {
 		Name = "Window",
