@@ -1,13 +1,113 @@
--- VeroLib.lua
--- Vero UI Library
--- Place in ReplicatedStorage and require from a LocalScript in StarterPlayerScripts
+-- ╔══════════════════════════════════════════════════════════════╗
+-- ║                        VeroLib.lua                          ║
+-- ║                     Vero UI Library v1.0                    ║
+-- ╚══════════════════════════════════════════════════════════════╝
+--
+-- SETUP
+--   1. Place VeroLib.lua inside ReplicatedStorage
+--   2. Create a LocalScript inside StarterPlayerScripts
+--   3. Require and build your UI:
+--
+--        local VeroLib = require(game.ReplicatedStorage.VeroLib)
+--        local window  = VeroLib.new("DarkGrey")
+--        window:BindToggleKey(Enum.KeyCode.RightShift)
+--
+--        local player = window:AddTab("player")
+--        player:AddSection("protection")
+--        player:AddToggle("god mode", "infinite health", false, function(v) end)
+--        player:AddSlider("walk speed", 16, 100, 16, function(v)
+--            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+--        end)
+--
+--        window:SetStatus("ready")
+--
+-- ──────────────────────────────────────────────────────────────
+-- WINDOW API
+-- ──────────────────────────────────────────────────────────────
+--   VeroLib.new(themeName?)          Create and show the window
+--   window:AddTab(name)              Add a tab → returns Tab object
+--   window:SetStatus(text)           Update the status bar text
+--   window:SetTheme(themeName)       Swap theme at runtime
+--   window:BindToggleKey(keyCode?)   Bind show/hide key (default: RightShift)
+--   window:Expand(panelHeight)       Open panel to a pixel height  [internal]
+--   window:Collapse()                Close the panel               [internal]
+--
+-- ──────────────────────────────────────────────────────────────
+-- TAB BUILDERS  (call on the object returned by AddTab)
+-- ──────────────────────────────────────────────────────────────
+--   tab:AddSection(title)
+--       Uppercase label divider — no return value
+--
+--   tab:AddSeparator()
+--       Thin horizontal rule — no return value
+--
+--   tab:AddToggle(name, desc, default, callback)
+--       callback(bool)
+--       Returns { SetValue(bool), GetValue() }
+--
+--   tab:AddSlider(name, min, max, default, callback)
+--       callback(number)   Has a reset button back to default
+--       Returns { SetValue(n), GetValue(), Reset() }
+--
+--   tab:AddButton(name, desc, label, callback)
+--       callback()
+--       No return value
+--
+--   tab:AddDropdown(name, options, default, callback)
+--       options = { "opt1", "opt2", ... }
+--       callback(selectedString)
+--       Returns { SetValue(str), GetValue() }
+--
+--   tab:AddKeybind(name, desc, default, callback)
+--       default = Enum.KeyCode.X    Click badge to rebind
+--       callback(Enum.KeyCode)
+--       Returns { GetKey() }
+--
+--   tab:AddTextInput(name, placeholder, callback)
+--       callback(text, enterPressed)
+--       Returns { GetValue(), SetValue(str) }
+--
+--   tab:AddColorPicker(name, desc, swatches, default, callback)
+--       swatches = { Color3, Color3, ... }
+--       callback(Color3)
+--       Returns { GetValue(), SetValue(Color3) }
+--
+--   tab:AddSearch(placeholder, onChange?)
+--       Filters all rows in the tab by text content as user types
+--       onChange(query) optional
+--       Returns { GetValue(), Clear() }
+--
+--   tab:AddGameBox(placeId, title, buildFn)
+--       buildFn(panel, state) — panel is a full Tab proxy
+--       state:get(key, default) / state:set(key, value)
+--       State persists across open/close cycles
+--       No return value
+--
+-- ──────────────────────────────────────────────────────────────
+-- THEMES  (pass name string to VeroLib.new or window:SetTheme)
+-- ──────────────────────────────────────────────────────────────
+--   DarkGrey · Midnight · Purple · Ocean · Ember · Matrix
+--   Rose · Light · Void · Cyber · NeonPink · Toxic · Blood
+--   Gold · Teal · Hazard · Sakura · Ultraviolet · Mint · Solar
+--
+-- ──────────────────────────────────────────────────────────────
+-- RESPONSIVE SCALING
+-- ──────────────────────────────────────────────────────────────
+--   The window uses UDim2.fromScale for its size and position so
+--   it fits correctly on PC, tablet, and mobile. All internal
+--   pixel values run through px() which scales relative to a
+--   1920×1080 base resolution at runtime.
+--   window.MaxPanelHeight (default 0.45) controls the max panel
+--   height as a fraction of the screen height before scrolling.
+--
+-- ──────────────────────────────────────────────────────────────
 
 local VeroLib = {}
 VeroLib.__index = VeroLib
 
--- ─────────────────────────────────────────
--- Services
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § SERVICES
+-- ══════════════════════════════════════════
 local Players          = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService     = game:GetService("TweenService")
@@ -16,9 +116,9 @@ local HttpService      = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui   = LocalPlayer:WaitForChild("PlayerGui")
 
--- ─────────────────────────────────────────
--- Tween presets
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § TWEEN PRESETS
+-- ══════════════════════════════════════════
 local TW_FAST   = TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local TW_MED    = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local TW_SLOW   = TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -28,13 +128,11 @@ local function tween(inst, info, props)
 	TweenService:Create(inst, info, props):Play()
 end
 
--- ─────────────────────────────────────────
--- Responsive scale helper
--- Converts a "designed at 1920×1080" pixel value to a scaled pixel
--- value based on the actual screen size at runtime.
--- Everything inside the window uses these so the UI looks correct
--- on any device — mobile, tablet, or PC.
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § RESPONSIVE SCALE
+--   px(n) converts a design-pixel value (based on 1920×1080) to
+--   a scaled pixel for the actual screen at runtime.
+-- ══════════════════════════════════════════
 local BASE_W = 1920
 local BASE_H = 1080
 
@@ -48,9 +146,9 @@ local function px(n)
 	return math.round(n * getScale())
 end
 
--- ─────────────────────────────────────────
--- Themes
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § THEMES
+-- ══════════════════════════════════════════
 local Themes = {
 	DarkGrey = {
 		Background   = Color3.fromRGB(24, 24, 27),
@@ -735,9 +833,9 @@ local Themes = {
 }
 VeroLib.Themes = Themes
 
--- ─────────────────────────────────────────
--- Helpers
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § HELPERS
+-- ══════════════════════════════════════════
 local function make(class, props, parent)
 	local inst = Instance.new(class)
 	for k, v in pairs(props) do inst[k] = v end
@@ -800,9 +898,9 @@ local function addHover(frame, normalColor, hoverColor)
 	end)
 end
 
--- ─────────────────────────────────────────
--- Tab metatable
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § TAB  (component builders live here)
+-- ══════════════════════════════════════════
 local Tab = {}
 Tab.__index = Tab
 
@@ -827,7 +925,8 @@ function Tab:_row(height)
 	return row
 end
 
--- AddSection
+-- AddSection(title)
+--   Uppercase label divider
 function Tab:AddSection(title)
 	local T   = self._window.Theme
 	local lbl = make("TextLabel", {
@@ -844,7 +943,8 @@ function Tab:AddSection(title)
 	table.insert(self._rows, { frame = lbl, type = "section" })
 end
 
--- AddSeparator
+-- AddSeparator()
+--   Thin horizontal rule
 function Tab:AddSeparator()
 	local T   = self._window.Theme
 	local sep = make("Frame", {
@@ -858,7 +958,8 @@ function Tab:AddSeparator()
 	table.insert(self._rows, { frame = sep, type = "separator" })
 end
 
--- AddToggle
+-- AddToggle(name, desc, default, callback)
+--   callback(bool) → returns { SetValue, GetValue }
 function Tab:AddToggle(name, desc, default, callback)
 	local T     = self._window.Theme
 	local value = default or false
@@ -927,7 +1028,8 @@ function Tab:AddToggle(name, desc, default, callback)
 	return obj
 end
 
--- AddSlider
+-- AddSlider(name, min, max, default, callback)
+--   callback(number) → returns { SetValue, GetValue, Reset }
 function Tab:AddSlider(name, min, max, default, callback)
 	local T        = self._window.Theme
 	local defaultV = math.clamp(default or min, min, max)
@@ -1028,7 +1130,8 @@ function Tab:AddSlider(name, min, max, default, callback)
 	return obj
 end
 
--- AddButton
+-- AddButton(name, desc, label, callback)
+--   callback()
 function Tab:AddButton(name, desc, label, callback)
 	local T   = self._window.Theme
 	local row = self:_row(44)
@@ -1071,7 +1174,8 @@ function Tab:AddButton(name, desc, label, callback)
 	entry.btn  = btn
 end
 
--- AddDropdown
+-- AddDropdown(name, options, default, callback)
+--   callback(selectedString) → returns { SetValue, GetValue }
 function Tab:AddDropdown(name, options, default, callback)
 	local T     = self._window.Theme
 	local value = default or options[1]
@@ -1213,7 +1317,8 @@ function Tab:AddDropdown(name, options, default, callback)
 	return obj
 end
 
--- AddKeybind
+-- AddKeybind(name, desc, default, callback)
+--   callback(Enum.KeyCode) → returns { GetKey }
 function Tab:AddKeybind(name, desc, default, callback)
 	local T       = self._window.Theme
 	local key     = default or Enum.KeyCode.Unknown
@@ -1270,7 +1375,8 @@ function Tab:AddKeybind(name, desc, default, callback)
 	return obj
 end
 
--- AddTextInput
+-- AddTextInput(name, placeholder, callback)
+--   callback(text, enterPressed) → returns { GetValue, SetValue }
 function Tab:AddTextInput(name, placeholder, callback)
 	local T   = self._window.Theme
 	local row = self:_row(60)
@@ -1315,7 +1421,8 @@ function Tab:AddTextInput(name, placeholder, callback)
 	return obj
 end
 
--- AddColorPicker
+-- AddColorPicker(name, desc, swatches, default, callback)
+--   callback(Color3) → returns { GetValue, SetValue }
 function Tab:AddColorPicker(name, desc, swatches, default, callback)
 	local T     = self._window.Theme
 	local value = default or swatches[1]
@@ -1475,7 +1582,9 @@ function Tab:AddSearch(placeholder, onChange)
 end
 
 -- ─────────────────────────────────────────
--- AddGameBox
+-- AddGameBox(placeId, title, buildFn)
+--   buildFn(panel, state) — panel has all Tab builders
+--   state:get(key,default) / state:set(key,value) persist across open/close
 -- ─────────────────────────────────────────
 function Tab:AddGameBox(placeId, title, buildFn)
 	local T        = self._window.Theme
@@ -1653,7 +1762,7 @@ function Tab:AddGameBox(placeId, title, buildFn)
 end
 
 -- ─────────────────────────────────────────
--- Tab:ApplyTheme
+-- Tab:ApplyTheme  (internal — called by SetTheme)
 -- ─────────────────────────────────────────
 function Tab:ApplyTheme(T)
 	for _, entry in ipairs(self._rows) do
@@ -1750,9 +1859,9 @@ function Tab:ApplyTheme(T)
 	end
 end
 
--- ─────────────────────────────────────────
--- VeroLib.new
--- ─────────────────────────────────────────
+-- ══════════════════════════════════════════
+-- § WINDOW CONSTRUCTOR
+-- ══════════════════════════════════════════
 function VeroLib.new(themeName)
 	local self = setmetatable({}, VeroLib)
 	self.Theme     = Themes[themeName or "DarkGrey"]
@@ -1768,7 +1877,6 @@ function VeroLib.new(themeName)
 	}, PlayerGui)
 
 	-- Window: scale-based size and position so it fits all screen sizes.
-	-- UIAspectRatioConstraint locks the shape so it never squishes.
 	self.Window = make("Frame", {
 		Name = "Window",
 		Size            = UDim2.fromScale(0.227, 0.043),
@@ -1778,14 +1886,11 @@ function VeroLib.new(themeName)
 	}, self.ScreenGui)
 	corner(self.Window, 10)
 	stroke(self.Window, T.BarBorder, 1)
-	-- Lock aspect ratio: at 1920×1080, 0.227×1920 / (0.043×1080) ≈ 9.88:1
-	make("UIAspectRatioConstraint", {
-		AspectRatio  = 9.88,
-		AspectType   = Enum.AspectType.FitWithinMaxSize,
-		DominantAxis = Enum.DominantAxis.Width,
-	}, self.Window)
+	-- No AspectRatioConstraint — the window uses fromScale width which is
+	-- already responsive. A constraint would fight Expand() when the panel opens.
 
-	-- Bar: fixed pixel height, scales via px()
+	-- Bar height: read AbsoluteSize after one frame so the camera is ready.
+	-- px(44) is used as a safe fallback for the initial Bar size.
 	local BAR_H = px(44)
 	self._barH = BAR_H
 
@@ -1847,10 +1952,9 @@ function VeroLib.new(themeName)
 		Name = "EndButtons",
 		Size = UDim2.new(0, px(76), 1, 0),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, 0, 0, 0),
+		Position = UDim2.new(.99, 0, 0, 0),
 		BackgroundTransparency = 1, ZIndex = 5,
 	}, self.Bar)
-	stroke(endFrame, T.BarBorder, 1)
 	make("UIListLayout", {
 		FillDirection = Enum.FillDirection.Horizontal,
 		VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -1951,6 +2055,12 @@ function VeroLib.new(themeName)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
 	end)
 
+	-- After the window renders, update _barH to the real pixel height
+	-- so Expand/Collapse always use the correct value
+	task.defer(function()
+		self._barH = self.Window.AbsoluteSize.Y
+	end)
+
 	self.MinimizeBtn.MouseButton1Click:Connect(function() self:Collapse() end)
 	self.CloseBtn.MouseButton1Click:Connect(function() self.ScreenGui:Destroy() end)
 
@@ -1971,7 +2081,7 @@ function VeroLib.new(themeName)
 end
 
 -- ─────────────────────────────────────────
--- _BuildSettingsTab
+-- _BuildSettingsTab  (lazy, called on first ⚙ click)
 -- ─────────────────────────────────────────
 function VeroLib:_BuildSettingsTab()
 	local tab = setmetatable({ _window = self, _layoutOrder = 0, _rows = {} }, Tab)
@@ -2030,7 +2140,7 @@ function VeroLib:_BuildSettingsTab()
 end
 
 -- ─────────────────────────────────────────
--- SetTheme
+-- SetTheme  — tweens all surfaces to new palette
 -- ─────────────────────────────────────────
 function VeroLib:SetTheme(themeName)
 	local T = Themes[themeName]
@@ -2071,32 +2181,36 @@ function VeroLib:SetTheme(themeName)
 end
 
 -- ─────────────────────────────────────────
--- Expand / Collapse
+-- Expand / Collapse  — panel open/close
 -- ─────────────────────────────────────────
 function VeroLib:Expand(panelHeight)
-	local barH    = self._barH
+	-- Bar.AbsoluteSize.Y is always the bar pixel height regardless of window state
+	local barH    = self.Bar.AbsoluteSize.Y > 0 and self.Bar.AbsoluteSize.Y or self._barH
+	self._barH    = barH  -- keep in sync
 	local screenH = game:GetService("Workspace").CurrentCamera.ViewportSize.Y
 	local maxPx   = math.floor(screenH * self.MaxPanelHeight)
 	local clamped = math.min(panelHeight, maxPx)
 	local sbH     = px(26)
 	local totalH  = barH + clamped + sbH
 
+	-- PanelBody sits directly below the bar
+	self.PanelBody.Position = UDim2.new(0, 0, 0, barH)
 	self.PanelBody.Size     = UDim2.new(1, 0, 0, clamped)
 	self.PanelBody.Visible  = true
 	self.StatusBar.Size     = UDim2.new(1, 0, 0, sbH)
 	self.StatusBar.Visible  = true
 	self.StatusBar.Position = UDim2.new(0, 0, 0, barH + clamped)
 
-	-- Expand window: keep scale X, grow with pixel height
 	local winScaleW = self.Window.Size.X.Scale
 	tween(self.Window, TW_MED, { Size = UDim2.new(winScaleW, 0, 0, totalH) })
 	self.Expanded = true
 end
 
 function VeroLib:Collapse()
+	-- _barH is the collapsed window height — always correct since we update
+	-- it in task.defer after init and it never changes after that
 	local winScaleW = self.Window.Size.X.Scale
-	local barH      = self._barH
-	tween(self.Window, TW_MED, { Size = UDim2.new(winScaleW, 0, 0, barH) })
+	tween(self.Window, TW_MED, { Size = UDim2.new(winScaleW, 0, 0, self._barH) })
 	task.delay(TW_MED.Time, function()
 		self.PanelBody.Visible = false
 		self.StatusBar.Visible = false
@@ -2106,7 +2220,7 @@ function VeroLib:Collapse()
 end
 
 -- ─────────────────────────────────────────
--- AddTab
+-- AddTab  — adds a bar tab and content frame
 -- ─────────────────────────────────────────
 function VeroLib:AddTab(name)
 	local T   = self.Theme
@@ -2168,7 +2282,7 @@ function VeroLib:AddTab(name)
 end
 
 -- ─────────────────────────────────────────
--- _SetActiveTab
+-- _SetActiveTab  (internal)
 -- ─────────────────────────────────────────
 function VeroLib:_SetActiveTab(tab)
 	local T = self.Theme
@@ -2194,6 +2308,10 @@ function VeroLib:_SetActiveTab(tab)
 
 	task.defer(function()
 		local panelH = tab.ContentFrame.AbsoluteSize.Y + px(24)
+		-- Bar.AbsoluteSize.Y is always the bar height regardless of panel state
+		if self.Bar.AbsoluteSize.Y > 0 then
+			self._barH = self.Bar.AbsoluteSize.Y
+		end
 		self:Expand(panelH)
 	end)
 end
