@@ -92,14 +92,8 @@
 -- ──────────────────────────────────────────────────────────────
 -- RESPONSIVE SCALING
 -- ──────────────────────────────────────────────────────────────
---   The window uses UDim2.fromScale for size and position so it
---   fits correctly on PC, tablet, and mobile. The window's scale
---   dimensions (0.285 wide × 0.043 tall) define the bar shape —
---   no UIAspectRatioConstraint is needed or used on the bar since
---   that fights in-game pixel dimensions. TextScaled=true handles
---   font sizing across all screen sizes.
---   window.MaxPanelHeight (default 0.45) sets the max panel
---   height as a fraction of screen height before scrolling kicks in.
+--   Change the X scale in VeroLib.new (default 0.285) to resize
+--   the bar width. Everything else derives from that value at runtime.
 --
 -- ──────────────────────────────────────────────────────────────
 
@@ -1818,12 +1812,11 @@ function VeroLib.new(themeName)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	}, PlayerGui)
 
-	-- Window: scale X so it fits proportionally on every screen width.
-	-- Y starts at 0 and is set to the bar height after init via task.defer.
-	-- All expand/collapse operates purely on pixel Y offsets from there.
+	self._winScaleX = 0.29
+
 	self.Window = make("Frame", {
 		Name = "Window",
-		Size            = UDim2.new(0.285, 0, 0, 0),  -- Y set after bar renders
+		Size            = UDim2.new(self._winScaleX, 0, 0, 0),
 		Position        = UDim2.fromScale(0.686, 0.916),
 		BackgroundColor3 = T.Background,
 		BorderSizePixel = 0, ClipsDescendants = true,
@@ -1831,16 +1824,12 @@ function VeroLib.new(themeName)
 	corner(self.Window, 10)
 	stroke(self.Window, T.BarBorder, 1)
 
-	-- Bar: fixed pixel height derived from window scale width so it stays
-	-- proportional on every screen. Width / ~10.5 gives a comfortable bar height.
-	-- We calculate after one frame when AbsoluteSize is populated.
 	self.Bar = make("Frame", {
-		Name = "Bar", Size = UDim2.new(1, 0, 0, 0),  -- height set in task.defer below
+		Name = "Bar", Size = UDim2.new(1, 0, 0, 0),
 		BackgroundColor3 = T.Bar, BorderSizePixel = 0, ZIndex = 4,
 	}, self.Window)
 	corner(self.Bar, 10)
 
-	-- Brand: 19.5% of bar width
 	local brand = make("Frame", {
 		Name = "Brand", Size = UDim2.fromScale(0.195, 1),
 		BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 5,
@@ -1880,7 +1869,6 @@ function VeroLib.new(themeName)
 	}, brand)
 	self._brandLabel = brandLabel
 
-	-- TabContainer: 63% of bar width between brand and end buttons
 	self.TabContainer = make("Frame", {
 		Name = "TabContainer", Size = UDim2.fromScale(0.63, 1),
 		Position = UDim2.fromScale(0.195, 0),
@@ -1889,8 +1877,6 @@ function VeroLib.new(themeName)
 	}, self.Bar)
 	listLayout(self.TabContainer, Enum.FillDirection.Horizontal, 0)
 
-	-- End buttons: 17.5% of bar width, right-anchored
-	-- 19.5 + 63 + 17.5 = 100% — tiles perfectly, no overlap possible
 	local endFrame = make("Frame", {
 		Name = "EndButtons",
 		Size = UDim2.fromScale(0.175, 1),
@@ -1924,14 +1910,12 @@ function VeroLib.new(themeName)
 	self.MinimizeBtn = endBtn("−", 2)
 	self.CloseBtn    = endBtn("X", 3)
 
-	-- Max panel height as a fraction of screen height (0.45 = 45%)
 	self.MaxPanelHeight = 0.45
 
-	-- PanelBody: positioned below the bar using pixel offset, never scale
 	self.PanelBody = make("ScrollingFrame", {
 		Name = "PanelBody",
 		Size = UDim2.new(1, 0, 0, 0),
-		Position = UDim2.new(0, 0, 0, 0),  -- corrected to pixel Y in task.defer
+		Position = UDim2.new(0, 0, 0, 0),
 		BackgroundColor3 = T.PanelBg,
 		BorderSizePixel = 0, ZIndex = 3, Visible = false,
 		ScrollBarThickness = 3,
@@ -1945,7 +1929,6 @@ function VeroLib.new(themeName)
 	padding(self.PanelBody, 14, 14, 12, 12)
 	listLayout(self.PanelBody, nil, 8)
 
-	-- StatusBar sits below PanelBody; size and position set by Expand()
 	self.StatusBar = make("Frame", {
 		Name = "StatusBar", Size = UDim2.new(1, 0, 0, 0),
 		BackgroundColor3 = T.StatusBar, BorderSizePixel = 0,
@@ -1968,7 +1951,7 @@ function VeroLib.new(themeName)
 	corner(self.StatusDot, 10)
 
 	self.StatusLabel = make("TextLabel", {
-		Size = UDim2.fromScale(0.82, 1), Position = UDim2.fromScale(0.04, 0),
+		Size = UDim2.fromScale(0.5, 1), Position = UDim2.fromScale(0.04, 0),
 		BackgroundTransparency = 1, Text = "ready",
 		TextColor3 = T.StatusText, Font = Enum.Font.Gotham,
 		TextSize = 0, TextScaled = true,
@@ -1983,7 +1966,6 @@ function VeroLib.new(themeName)
 		TextXAlignment = Enum.TextXAlignment.Right, ZIndex = 5,
 	}, statusInner)
 
-	-- Drag the window by clicking and dragging the bar
 	local dragging, dragStart, startPos
 	self.Bar.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -2005,21 +1987,16 @@ function VeroLib.new(themeName)
 	self.MinimizeBtn.MouseButton1Click:Connect(function() self:Collapse() end)
 	self.CloseBtn.MouseButton1Click:Connect(function() self.ScreenGui:Destroy() end)
 
-	-- After one frame the window has rendered and AbsoluteSize is real.
-	-- Compute bar height from window width / aspect ratio, then lock everything.
 	task.defer(function()
 		local winW   = self.Window.AbsoluteSize.X
-		local barH   = math.round(winW / 10.5)  -- ~10.5:1 aspect for the bar
+		local barH   = math.round(winW / 10.5)
 		self._barH   = barH
-		-- Set bar to its correct pixel height
 		self.Bar.Size = UDim2.new(1, 0, 0, barH)
-		-- Set window to exactly bar height (collapsed state)
-		self.Window.Size = UDim2.new(0.285, 0, 0, barH)
-		-- PanelBody sits directly below the bar
+		-- _winScaleX is already correct, do not overwrite it here
+		self.Window.Size = UDim2.new(self._winScaleX, 0, 0, barH)
 		self.PanelBody.Position = UDim2.new(0, 0, 0, barH)
 	end)
 
-	-- Settings panel is lazy-built on first ⚙ click
 	self._settingsBuilt = false
 	self.SettingsBtn.MouseButton1Click:Connect(function()
 		if not self._settingsBuilt then
@@ -2162,7 +2139,7 @@ function VeroLib:Expand(panelHeight)
 	self.StatusBar.Position     = UDim2.new(0, 0, 0, barH + clamped)
 
 	-- Window grows in pixel Y only — X stays as pure scale
-	tween(self.Window, TW_MED, { Size = UDim2.new(0.285, 0, 0, totalH) })
+	tween(self.Window, TW_MED, { Size = UDim2.new(self._winScaleX, 0, 0, totalH) })
 	self.Expanded = true
 end
 
@@ -2173,7 +2150,7 @@ function VeroLib:Collapse()
 		self._barH = barH
 	end
 	-- Collapse window back to just the bar height
-	tween(self.Window, TW_MED, { Size = UDim2.new(0.285, 0, 0, barH) })
+	tween(self.Window, TW_MED, { Size = UDim2.new(self._winScaleX, 0, 0, barH) })
 	task.delay(TW_MED.Time, function()
 		self.PanelBody.Visible = false
 		self.StatusBar.Visible = false
