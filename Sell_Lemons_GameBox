@@ -1,0 +1,44 @@
+local args = {...}
+local games = args[1]
+
+if not games then warn("Couldnt Connect") return end
+
+games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
+	panel:AddSection("Lemon Trees")
+  local ClickAura_conn
+	panel:AddToggle("Click Aura", "Just walk up and itll auto click",
+		state:get("autoFarm", false),   -- reads saved value, defaults to false
+		function(v)
+			state:set("autoFarm", v)    -- saves it for next open
+			if not v then
+				ClickAura_conn:Disconnect()
+                ClickAura_conn = nil
+				return
+			end
+			ClickAura_conn = RunService.Heartbeat:Connect(function()
+				local character = player.Character
+				if not character then return end
+
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if not hrp then return end
+
+				local overlapParams = OverlapParams.new()
+				overlapParams.FilterType = Enum.RaycastFilterType.Exclude
+				overlapParams.FilterDescendantsInstances = {character}
+
+				for _, part in ipairs(workspace:GetPartBoundsInRadius(hrp.Position, 25, overlapParams)) do
+                    --//Search to make sure its the right model
+                    local model = part:FindFirstAncestorWhichIsA("Model")
+                    if model and model.Name == "LemonTree" then
+                        --//Search for the click detector
+                        local clickDetector = part:FindFirstChildWhichIsA("ClickDetector")
+                        if clickDetector then
+                            fireclickdetector(clickDetector)
+                        end
+                    end
+					task.wait(.05)
+				end
+			end)
+		end
+	)
+end)
