@@ -1898,7 +1898,6 @@ function VeroLib.new(themeName)
 		Position = UDim2.fromScale(1, 0),
 		BackgroundTransparency = 1, ZIndex = 5,
 	}, self.Bar)
-	stroke(endFrame, T.BarBorder, 1)
 	make("UIListLayout", {
 		FillDirection = Enum.FillDirection.Horizontal,
 		VerticalAlignment = Enum.VerticalAlignment.Center,
