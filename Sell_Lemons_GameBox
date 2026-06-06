@@ -1,3 +1,6 @@
+local playerService = game:GetService("Players")
+local player = playerService.LocalPlayer
+
 local args = {...}
 local games = args[1]
 
