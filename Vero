@@ -1,6 +1,5 @@
 --//Main UI
---local VeroLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/refs/heads/main/VeroUI_Lib"))()
-local VeroLib = require(game.ReplicatedStorage.VeroLib)
+local VeroLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/refs/heads/main/VeroUI_Lib"))()
 
 local window = VeroLib.new("DarkGrey")
 window:BindToggleKey(Enum.KeyCode.LeftAlt)
