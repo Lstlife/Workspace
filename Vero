@@ -1,0 +1,55 @@
+--//Main UI
+--local VeroLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/refs/heads/main/VeroUI_Lib"))()
+local VeroLib = require(game.ReplicatedStorage.VeroLib)
+
+local window = VeroLib.new("DarkGrey")
+window:BindToggleKey(Enum.KeyCode.LeftAlt)
+
+--//Tabs
+local Client = window:AddTab("client")
+local visuals = window:AddTab("visuals")
+local players = window:AddTab("players")
+local games   = window:AddTab("games")
+
+
+--[[
+---------------------------------------------------
+
+IDEAS FOR CLIENT:
+-WalkSpeed (slider)
+-JumpPower (slider)
+-Infinite Jump (toggle)
+
+IDEAS FOR GAMES:
+
+Sell Lemons[
+-Click Detector Aura
+]
+
+---------------------------------------------------
+]]--
+
+
+--//PLAYER
+Client:AddSection("protection")
+Client:AddSearch("Search..")
+Client:AddButton("Dex Explorer", "Made by Vezise", "Load", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/2026/main/Vez/VexExplorer/VEXExplorer.lua"))()
+end)
+
+--//GAMES
+games:AddSearch("Search..")
+games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
+	panel:AddSection("Lemon Trees")
+
+	panel:AddToggle("Click Aura", "Just walk up and itll auto click",
+		state:get("autoFarm", false),   -- reads saved value, defaults to false
+		function(v)
+			state:set("autoFarm", v)    -- saves it for next open
+			-- your logic here
+		end
+	)
+end)
+
+--//INIT
+window:SetStatus("ready")
