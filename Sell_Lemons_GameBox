@@ -1,8 +1,6 @@
 local playerService = game:GetService("Players")
 local player = playerService.LocalPlayer
 
-local RunService = game:GetService("RunService")
-
 local args = {...}
 local games = args[1]
 
@@ -10,17 +8,19 @@ if not games then warn("Couldnt Connect") return end
 
 games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
 	panel:AddSection("Lemon Trees")
-  local ClickAura_conn
+  	local ClickAura_conn
 	panel:AddToggle("Click Aura", "Just walk up and itll auto click",
 		state:get("autoFarm", false),   -- reads saved value, defaults to false
 		function(v)
 			state:set("autoFarm", v)    -- saves it for next open
 			if not v then
-				ClickAura_conn:Disconnect()
-                ClickAura_conn = nil
+				if ClickAura_conn then
+					ClickAura_conn:Disconnect()
+					ClickAura_conn = nil
+				end
 				return
 			end
-			ClickAura_conn = RunService.Heartbeat:Connect(function()
+			ClickAura_conn = game:GetService("RunService").Heartbeat:Connect(function()
 				local character = player.Character
 				if not character then return end
 
