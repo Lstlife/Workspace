@@ -92,12 +92,11 @@
 -- ──────────────────────────────────────────────────────────────
 -- RESPONSIVE SCALING
 -- ──────────────────────────────────────────────────────────────
---   The window uses UDim2.fromScale for size and position so it
---   fits correctly on PC, tablet, and mobile. The window's scale
---   dimensions (0.285 wide × 0.043 tall) define the bar shape —
---   no UIAspectRatioConstraint is needed or used on the bar since
---   that fights in-game pixel dimensions. TextScaled=true handles
---   font sizing across all screen sizes.
+--   The window uses UDim2.fromScale for size and position.
+--   All internal layout is fromScale relative to each parent so
+--   everything proportionally fits on PC, tablet, and mobile.
+--   UIAspectRatioConstraint on the Bar keeps the bar height
+--   correct on every screen. TextScaled=true handles font sizing.
 --   window.MaxPanelHeight (default 0.45) sets the max panel
 --   height as a fraction of screen height before scrolling kicks in.
 --
@@ -1830,15 +1829,15 @@ function VeroLib.new(themeName)
 	corner(self.Window, 10)
 	stroke(self.Window, T.BarBorder, 1)
 
+	-- Bar fills the window when collapsed.
+	-- UIAspectRatioConstraint on the Bar locks it to a wide bar shape
+	-- on every screen. The Window is free to grow vertically when the
+	-- panel opens because the constraint is on the Bar, not the Window.
 	self.Bar = make("Frame", {
 		Name = "Bar", Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = T.Bar, BorderSizePixel = 0, ZIndex = 4,
 	}, self.Window)
 	corner(self.Bar, 10)
-	-- No UIAspectRatioConstraint on the Bar — the window itself uses fromScale
-	-- for both width and height so the bar shape is already controlled by the
-	-- window's aspect ratio at the screen level. A constraint here fights the
-	-- in-game pixel dimensions and causes the bar to squish or clip.
 
 	-- Brand: 19.5% of bar width
 	local brand = make("Frame", {
@@ -1895,10 +1894,9 @@ function VeroLib.new(themeName)
 		Name = "EndButtons",
 		Size = UDim2.fromScale(0.175, 1),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.fromScale(1, 0),
+		Position = UDim2.fromScale(.99, 0),
 		BackgroundTransparency = 1, ZIndex = 5,
 	}, self.Bar)
-	stroke(endFrame, T.BarBorder, 1)
 	make("UIListLayout", {
 		FillDirection = Enum.FillDirection.Horizontal,
 		VerticalAlignment = Enum.VerticalAlignment.Center,
