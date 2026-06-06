@@ -1900,21 +1900,21 @@ function VeroLib.new(themeName)
 	}, self.Window)
 	corner(self.Bar, 10)
 
-	-- Brand
+	-- Brand: 19.5% of bar width — fixed proportion so it never overlaps tabs
 	local brand = make("Frame", {
-		Name = "Brand", Size = UDim2.new(0, px(85), 1, 0),
+		Name = "Brand", Size = UDim2.fromScale(0.195, 1),
 		BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 5,
 	}, self.Bar)
 	stroke(brand, T.BarBorder, 1)
 
 	local logoContainer = make("Frame", {
-		Size = UDim2.fromOffset(px(22), px(22)), AnchorPoint = Vector2.new(0, 0.5),
-		Position = UDim2.new(0, px(14), 0.5, 0),
+		Size = UDim2.fromScale(0.28, 0.55), AnchorPoint = Vector2.new(0, 0.5),
+		Position = UDim2.fromScale(0.08, 0.5),
 		BackgroundTransparency = 1, ZIndex = 5,
 	}, brand)
 
 	local outerDiamond = make("Frame", {
-		Size = UDim2.fromOffset(px(16), px(16)), AnchorPoint = Vector2.new(0.5, 0.5),
+		Size = UDim2.fromScale(0.72, 0.72), AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5),
 		BackgroundColor3 = T.LogoColor, BorderSizePixel = 0,
 		Rotation = 45, ZIndex = 5,
@@ -1923,7 +1923,7 @@ function VeroLib.new(themeName)
 	self._outerDiamond = outerDiamond
 
 	local innerDiamond = make("Frame", {
-		Size = UDim2.fromOffset(px(7), px(7)), AnchorPoint = Vector2.new(0.5, 0.5),
+		Size = UDim2.fromScale(0.44, 0.44), AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5),
 		BackgroundColor3 = T.Bar, BorderSizePixel = 0,
 		Rotation = 0, ZIndex = 6,
@@ -1932,41 +1932,43 @@ function VeroLib.new(themeName)
 	self._innerDiamond = innerDiamond
 
 	local brandLabel = make("TextLabel", {
-		Name = "BrandName", Size = UDim2.new(1, -px(48), 1, 0),
-		Position = UDim2.fromOffset(px(42), 0), BackgroundTransparency = 1,
+		Name = "BrandName", Size = UDim2.fromScale(0.6, 1),
+		Position = UDim2.fromScale(0.38, 0), BackgroundTransparency = 1,
 		Text = "vero", TextColor3 = T.BrandText,
 		Font = Enum.Font.GothamMedium, TextSize = px(13),
 		TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 5,
 	}, brand)
 	self._brandLabel = brandLabel
 
+	-- TabContainer: sits between brand (19.5%) and end buttons (17.5%)
+	-- Using scale means it always fills exactly the available middle space
 	self.TabContainer = make("Frame", {
-		Name = "TabContainer", Size = UDim2.new(1, -px(161), 1, 0),
-		Position = UDim2.fromOffset(px(86), 0),
+		Name = "TabContainer", Size = UDim2.fromScale(0.63, 1),
+		Position = UDim2.fromScale(0.195, 0),
 		BackgroundTransparency = 1, BorderSizePixel = 0,
 		ZIndex = 5, ClipsDescendants = true,
 	}, self.Bar)
 	listLayout(self.TabContainer, Enum.FillDirection.Horizontal, 0)
 
+	-- End buttons: 17.5% of bar width, anchored to the right
 	local endFrame = make("Frame", {
 		Name = "EndButtons",
-		Size = UDim2.new(0, px(76), 1, 0),
+		Size = UDim2.fromScale(0.175, 1),
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(.99, 0, 0, 0),
+		Position = UDim2.fromScale(.99, 0),
 		BackgroundTransparency = 1, ZIndex = 5,
 	}, self.Bar)
 	make("UIListLayout", {
 		FillDirection = Enum.FillDirection.Horizontal,
 		VerticalAlignment = Enum.VerticalAlignment.Center,
 		HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		Padding = UDim.new(0, px(8)),
+		Padding = UDim.new(0.08, 0),
 	}, endFrame)
-	padding(endFrame, px(10), px(10))
 	self._endFrame = endFrame
 
 	local function endBtn(text, order)
 		local b = make("TextButton", {
-			Size = UDim2.fromOffset(px(18), px(18)),
+			Size = UDim2.fromScale(0.28, 0.55),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			Text = text, TextColor3 = T.EndBtn,
