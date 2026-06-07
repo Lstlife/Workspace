@@ -1,3 +1,5 @@
+local player = game:GetService("Players").LocalPlayer
+
 --//Main UI
 local VeroLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Lstlife/Workspace/refs/heads/main/VeroUI_Lib"))()
 
@@ -34,6 +36,39 @@ Client:AddSection("protection")
 Client:AddSearch("Search..")
 Client:AddButton("Dex Explorer", "Made by Vezise", "Load", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/2026/main/Vez/VexExplorer/VEXExplorer.lua"))()
+end)
+
+local ClickAura_conn
+Client:AddToggle("Click Aura", "Spams click detectors around character", false, function(v)
+    if not v then
+        if ClickAura_conn then
+            ClickAura_conn:Disconnect()
+            ClickAura_conn = nil
+        end
+        return
+    end
+
+    ClickAura_conn = game:GetService("RunService").Heartbeat:Connect(function()
+        local character = player.Character
+        if not character then return end
+
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+
+        local overlapParams = OverlapParams.new()
+        overlapParams.FilterType = Enum.RaycastFilterType.Exclude
+        overlapParams.FilterDescendantsInstances = {character}
+
+        task.spawn(function()
+            for _, part in ipairs(workspace:GetPartBoundsInRadius(hrp.Position, 25, overlapParams)) do
+                local clickDetector = part:FindFirstChildWhichIsA("ClickDetector")
+                if clickDetector then
+                    fireclickdetector(clickDetector)
+                end
+            end
+            task.wait(.05)
+        end)
+    end)
 end)
 
 --//GAMES\\--
