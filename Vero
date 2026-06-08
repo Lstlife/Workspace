@@ -43,9 +43,6 @@ end)
 Client:AddButton("Aimbot", "Temporary", "Load", function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/hm5650/HBSS/refs/heads/main/HBSS.lua"))()
 end)
-Client:AddButton("SCP-106", "Reanim", "Load", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ilikeices/script/refs/heads/main/scp106.luau"))()
-end)
 
 local ClickAura_conn
 Client:AddToggle("Click Aura", "Spams click detectors around character", false, function(v)
