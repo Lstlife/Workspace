@@ -8,8 +8,35 @@ if not games then warn("Couldnt Connect") return end
 
 games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
 	panel:AddSection("Lemon Trees")
+
+	--//Auto Click Stands
+	local ClickStand_conn
+	panel:AddToggle("Click Aura", "Click aura for the trees",
+		state:get("clickStand", false),   -- reads saved value, defaults to false
+		function(v)
+			state:set("clickStand", v)    -- saves it for next open
+			if not v then
+				if ClickStand_conn then
+					ClickStand_conn:Disconnect()
+					ClickStand_conn = nil
+				end
+				return
+			end
+			ClickStand_conn = game:GetService("RunService").Heartbeat:Connect(function()
+				
+			end)
+		end
+	)
+
+	--//Auto Buy Buttons
+
+	--//Auto Upgrade Earners
+
+	--//Auto Rebirth
+
+	--//Click Aura
   	local ClickAura_conn
-	panel:AddToggle("Click Aura", "Just walk up and itll auto click",
+	panel:AddToggle("Click Aura", "Click aura for the trees",
 		state:get("autoFarm", false),   -- reads saved value, defaults to false
 		function(v)
 			state:set("autoFarm", v)    -- saves it for next open
@@ -30,19 +57,21 @@ games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
 				local overlapParams = OverlapParams.new()
 				overlapParams.FilterType = Enum.RaycastFilterType.Exclude
 				overlapParams.FilterDescendantsInstances = {character}
-
-				for _, part in ipairs(workspace:GetPartBoundsInRadius(hrp.Position, 25, overlapParams)) do
-                    --//Search to make sure its the right model
-                    local model = part:FindFirstAncestorWhichIsA("Model")
-                    if model and model.Name == "LemonTree" then
-                        --//Search for the click detector
-                        local clickDetector = part:FindFirstChildWhichIsA("ClickDetector")
-                        if clickDetector then
-                            fireclickdetector(clickDetector)
-                        end
-                    end
+				
+				task.spawn(function()
+					for _, part in ipairs(workspace:GetPartBoundsInRadius(hrp.Position, 25, overlapParams)) do
+						--//Search to make sure its the right model
+						local model = part:FindFirstAncestorWhichIsA("Model")
+						if model and model.Name == "LemonTree" then
+							--//Search for the click detector
+							local clickDetector = part:FindFirstChildWhichIsA("ClickDetector")
+							if clickDetector then
+								fireclickdetector(clickDetector)
+							end
+						end
+					end
 					task.wait(.05)
-				end
+				end)
 			end)
 		end
 	)
