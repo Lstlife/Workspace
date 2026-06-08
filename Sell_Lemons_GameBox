@@ -10,23 +10,6 @@ games:AddGameBox(79268393072444, "Sell Lemons", function(panel, state)
 	panel:AddSection("Lemon Trees")
 
 	--//Auto Click Stands
-	local ClickStand_conn
-	panel:AddToggle("Click Aura", "Click aura for the trees",
-		state:get("clickStand", false),   -- reads saved value, defaults to false
-		function(v)
-			state:set("clickStand", v)    -- saves it for next open
-			if not v then
-				if ClickStand_conn then
-					ClickStand_conn:Disconnect()
-					ClickStand_conn = nil
-				end
-				return
-			end
-			ClickStand_conn = game:GetService("RunService").Heartbeat:Connect(function()
-				
-			end)
-		end
-	)
 
 	--//Auto Buy Buttons
 
